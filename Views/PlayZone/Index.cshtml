@@ -1,0 +1,1171 @@
+@using System.Linq
+@model List<PlayerScore>
+@{
+    ViewData["Title"] = "Play Zone";
+    var topScores = (ViewBag.TopScores as IEnumerable<PlayerScore>)?.ToList() ?? new List<PlayerScore>();
+    var displayScores = topScores.OrderByDescending(s => s.Score).Take(3).ToList();
+}
+
+@section Styles {
+    <style>
+        :root {
+            --primary: #6366F1;
+            --primary-dark: #4F46E5;
+            --secondary: #F43F5E;
+            --dark: #1F2937;
+            --light: #F9FAFB;
+            --gray: #6B7280;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .container-fluid {
+            margin-top: 80px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid var(--glass-border);
+            max-width: 1200px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .navbar {
+            background-color: #1F2937 !important;
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .navbar-brand, .nav-link {
+            color: white !important;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #F43F5E !important;
+        }
+
+        .player-form {
+            background: var(--glass-bg);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem auto;
+            max-width: 500px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            border: 1px solid var(--glass-border);
+            transition: transform 0.3s ease;
+        }
+
+        .player-form:hover {
+            transform: translateY(-5px);
+        }
+
+        .player-form h5 {
+            color: var(--dark);
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-label {
+            color: var(--dark);
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            display: block;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .form-control {
+            background: var(--light);
+            border: 2px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            color: var(--dark);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: #999;
+        }
+
+        .btn-play {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            font-size: 1.2rem;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            border: none;
+            transition: all 0.3s ease;
+            width: auto;
+            min-width: 200px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-play:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .input-group .form-control {
+            margin-bottom: 0;
+        }
+
+        #gameCanvas {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow-md);
+            width: 100%;
+            height: auto;
+        }
+
+        .play-zone-container {
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        .game-container {
+            background-color: var(--lsalt);
+            border: 1px solid var(--light-grey);
+            border-radius: var(--radius-lg);
+        }
+
+        .game-instruction {
+            text-align: center;
+            color: var(--gray);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .scoreboard {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .score-item {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            flex: 1;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s ease;
+        }
+
+        .score-item:hover {
+            transform: translateY(-3px);
+        }
+
+        .score-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .score-value {
+            color: var(--dark);
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .top-scores {
+            background: var(--glass-bg);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .top-scores h3 {
+            color: var(--dark);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .score-list {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+        }
+
+        .score-item-top {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            flex: 1;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .score-item-top:hover {
+            transform: translateY(-3px);
+        }
+
+        .score-item-top .player-name {
+            font-size: 0.9rem;
+            display: block;
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .score-item-top .player-score {
+            font-size: 1.5rem;
+            display: block;
+            color: var(--dark);
+            font-weight: 700;
+        }
+
+        .game-over {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--glass-bg);
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            z-index: 1000;
+            width: 400px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @@keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -60%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        .game-over h2 {
+            color: var(--dark);
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .game-over p {
+            color: var(--gray);
+            font-size: 1.4rem;
+            margin-bottom: 2rem;
+        }
+
+        .game-over .btn-play {
+            margin-bottom: 1rem;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .game-over .btn-play:hover {
+            transform: translateY(-3px);
+        }
+
+        .welcome-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--glass-bg);
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            z-index: 1000;
+            max-width: 450px;
+            width: 90%;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.5s ease;
+        }
+
+        @@keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to { 
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .welcome-popup h3 {
+            color: var(--dark);
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-popup p {
+            color: var(--gray);
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .welcome-popup .emoji {
+            font-size: 3rem;
+            margin: 1.5rem 0;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+
+        @@keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .welcome-popup .btn-play {
+            background-color: var(--terracotta);
+            color: var(--white);
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: auto;
+            min-width: 200px;
+            margin: 0 auto;
+        }
+
+        .welcome-popup .btn-play:hover {
+            background-color: var(--medium-purple);
+            transform: translateY(-2px);
+        }
+
+        .top-players h4 {
+            color: var(--color-purple);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .score-card {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--color-pink);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .score-card:hover {
+            border-color: var(--color-coral);
+            transform: translateY(-2px);
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .score-card .player-name {
+            color: var(--darkest-purple);
+        }
+
+        .score-card .score-value {
+            color: var(--color-terracotta);
+        }
+
+        .current-score {
+            background-color: var(--soft-pink);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .current-score .score-label {
+            color: var(--dark-teal);
+        }
+
+        .current-score .score-value {
+            color: var(--burgundy);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .game-over-popup {
+            background-color: var(--lsalt);
+            border: 1px solid var(--light-grey);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .score-board {
+            background-color: var(--lsalt);
+            border: 1px solid var(--light-grey);
+            border-radius: var(--radius-lg);
+        }
+
+        .player-name {
+            color: var(--mid-grey);
+        }
+
+        .player-score {
+            color: var(--pepper);
+            font-weight: bold;
+        }
+
+        .btn-game {
+            background-color: var(--pepper);
+            color: var(--lsalt);
+            border: none;
+        }
+
+        .btn-game:hover {
+            background-color: var(--mid-grey);
+        }
+
+        .score-display {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .score-display > div {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            min-width: 180px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease;
+        }
+
+        .score-display > div:hover {
+            transform: translateY(-5px);
+        }
+
+        .score-display > div > div:first-child {
+            color: var(--gray);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .score-display > div > div:last-child {
+            color: var(--dark);
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .top-players {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .top-players h4 {
+            color: var(--dark);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .top-players .d-flex {
+            gap: 2rem;
+        }
+
+        .top-players .d-flex > div {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            min-width: 150px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s ease;
+        }
+
+        .top-players .d-flex > div:hover {
+            transform: translateY(-5px);
+        }
+
+        .top-players .d-flex > div > div:first-child {
+            color: var(--gray);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .top-players .d-flex > div > div:last-child {
+            color: var(--dark);
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .game-instructions {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+        }
+
+        .game-instructions p {
+            color: var(--gray);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .game-wrapper {
+            background: var(--glass-bg);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .top-players-container {
+            background: var(--glass-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .top-players-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .player-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease;
+        }
+
+        .player-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .player-rank {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--accent-purple);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .player-info {
+            margin-top: 1rem;
+        }
+
+        .player-name {
+            color: var(--dark);
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .player-score {
+            color: var(--accent-purple);
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .score-display {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .score-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            min-width: 180px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease;
+        }
+
+        .score-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .score-label {
+            color: var(--gray);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-value {
+            color: var(--accent-purple);
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        @@media (max-width: 768px) {
+            .container-fluid {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+
+            .player-form {
+                padding: 2rem;
+            }
+
+            .scoreboard {
+                flex-direction: column;
+            }
+
+            .score-list {
+                flex-direction: column;
+            }
+
+            .welcome-popup,
+            .game-over {
+                width: 90%;
+                padding: 2rem;
+            }
+
+            .score-display {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .top-players .d-flex {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .top-players .d-flex > div {
+                width: 100%;
+                max-width: 250px;
+            }
+
+            .top-players-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .score-card {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+    </style>
+}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="player-form" id="playerForm">
+                <h5>Welcome to Snake Game!</h5>
+                <div class="mb-4">
+                    <label for="playerName" class="form-label">Enter Your Name:</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="playerName" placeholder="Type your name here..." required>
+                    </div>
+                    <button type="button" class="btn-play" onclick="startGame()">Start Game</button>
+                </div>
+            </div>
+
+            <div class="game-container" style="display: none;">
+                <div class="game-instructions text-center mb-3">
+                    <p class="mb-2" style="color: var(--medium-purple);">Use arrow keys to control the snake</p>
+                    <p style="color: var(--medium-purple);">Collect food to grow and increase your score!</p>
+                </div>
+                <div class="game-wrapper">
+                    <canvas id="gameCanvas"></canvas>
+                </div>
+            </div>
+
+            <div class="top-players-container">
+                <h4 class="text-center mb-4" style="color: var(--accent-purple);">Top Players</h4>
+                <div class="top-players-grid">
+                    @foreach (var score in displayScores)
+                    {
+                        <div class="player-card">
+                            <div class="player-rank">@(Array.IndexOf(displayScores.ToArray(), score) + 1)</div>
+                            <div class="player-info">
+                                <div class="player-name">@score.PlayerName</div>
+                                <div class="player-score">@score.Score</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="score-display">
+                <div class="score-card">
+                    <div class="score-label">Current Score</div>
+                    <div id="score" class="score-value">0</div>
+                </div>
+                <div class="score-card">
+                    <div class="score-label">Best Score</div>
+                    <div id="bestScore" class="score-value">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="game-over" id="gameOver">
+    <h2>Game Over!</h2>
+    <p>Your score: <span id="finalScore">0</span></p>
+    <div class="d-flex flex-column gap-2">
+        <button class="btn-play" onclick="restartGame()">Play Again</button>
+        <button class="btn-play" onclick="newGame()" style="background-color: var(--dark-teal);">New Player</button>
+    </div>
+</div>
+
+<div class="welcome-popup" id="welcomePopup">
+    <span class="emoji">🐍✨</span>
+    <h3>Welcome to Snake Game!</h3>
+    <p>My favorite game as a kid! Try to beat the high score! 😊</p>
+    <button onclick="closeWelcomePopup()" class="btn-play">Let's Play!</button>
+</div>
+
+@section Scripts {
+    <script>
+        let playerName = '';
+        let gameStarted = false;
+        let gridSize = 20;
+        let highScore = 0;
+        let canvas;
+        let ctx;
+        let gameLoop;
+        let snake;
+        let food;
+        let direction;
+        let score;
+        let isGameOver = false;
+
+        function startGame() {
+            playerName = document.getElementById('playerName').value.trim();
+            if (!playerName) {
+                alert('Please enter your name to start the game!');
+                return;
+            }
+
+            document.getElementById('welcomePopup').style.display = 'none';
+            document.getElementById('playerForm').style.display = 'none';
+            document.getElementById('gameOver').style.display = 'none';
+            document.querySelector('.game-container').style.display = 'block';
+            initializeGame();
+            gameStarted = true;
+        }
+
+        function initializeGame() {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+            
+            // Make canvas smaller for better layout
+            canvas.width = 400; // reduced from 600
+            canvas.height = 300; // reduced from 400
+            
+            // Adjust grid size based on canvas size
+            gridSize = Math.floor(canvas.width / 30); // 30 cells across
+
+            initGame();
+        }
+
+        function closeWelcomePopup() {
+            document.getElementById('welcomePopup').style.display = 'none';
+            document.getElementById('playerName').focus();
+        }
+
+        function initGame() {
+            clearInterval(gameLoop);
+            isGameOver = false;
+            // Start snake in the middle of the canvas
+            const startX = Math.floor((canvas.width / gridSize) / 2) * gridSize;
+            const startY = Math.floor((canvas.height / gridSize) / 2) * gridSize;
+            snake = [{x: startX, y: startY}];
+            direction = {x: gridSize, y: 0};
+            score = 0;
+            document.getElementById('score').textContent = '0';
+            generateFood();
+            
+            // Adjust game speed based on canvas size
+            const baseSpeed = 150;
+            const speedDecrease = 5;
+            const minSpeed = 50;
+            const currentSpeed = Math.max(minSpeed, baseSpeed - (score * speedDecrease));
+            gameLoop = setInterval(updateGame, currentSpeed);
+        }
+
+        function generateFood() {
+            let attempts = 0;
+            const maxAttempts = 100;
+            let newFood;
+            
+            do {
+                newFood = {
+                    x: Math.floor(Math.random() * (canvas.width / gridSize)) * gridSize,
+                    y: Math.floor(Math.random() * (canvas.height / gridSize)) * gridSize
+                };
+                
+                let onSnake = false;
+                for (let segment of snake) {
+                    if (segment.x === newFood.x && segment.y === newFood.y) {
+                        onSnake = true;
+                        break;
+                    }
+                }
+                
+                if (!onSnake) {
+                    food = newFood;
+                    return;
+                }
+                
+                attempts++;
+            } while (attempts < maxAttempts);
+            
+            console.error('Could not generate food position');
+        }
+
+        function updateGame() {
+            if (isGameOver) return;
+
+            const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+
+            if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
+                endGame();
+                return;
+            }
+
+            for (let i = 0; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    endGame();
+                    return;
+                }
+            }
+
+            snake.unshift(head);
+
+            const collisionMargin = gridSize * 0.7;
+            if (Math.abs(head.x - food.x) < collisionMargin && Math.abs(head.y - food.y) < collisionMargin) {
+                score += 10;
+                document.getElementById('score').textContent = score;
+                if (score > highScore) {
+                    highScore = score;
+                    document.getElementById('bestScore').textContent = highScore;
+                }
+                generateFood();
+            } else {
+                snake.pop();
+            }
+
+            draw();
+        }
+
+        function draw() {
+            // Clear canvas with a subtle gradient
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0.05)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw grid with subtle lines
+            ctx.strokeStyle = 'rgba(99, 102, 241, 0.05)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < canvas.width; i += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, canvas.height);
+                ctx.stroke();
+            }
+            for (let i = 0; i < canvas.height; i += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(canvas.width, i);
+                ctx.stroke();
+            }
+
+            // Draw snake with modern gradient
+            snake.forEach((segment, index) => {
+                const segmentSize = gridSize - 4;
+                const offset = (gridSize - segmentSize) / 2;
+                
+                if (index === 0) {
+                    // Head with gradient
+                    const headGradient = ctx.createLinearGradient(
+                        segment.x + offset,
+                        segment.y + offset,
+                        segment.x + offset + segmentSize,
+                        segment.y + offset + segmentSize
+                    );
+                    headGradient.addColorStop(0, '#4F46E5');
+                    headGradient.addColorStop(1, '#6366F1');
+                    ctx.fillStyle = headGradient;
+                    ctx.fillRect(segment.x + offset, segment.y + offset, segmentSize, segmentSize);
+                    
+                    // Eyes
+                    ctx.fillStyle = 'white';
+                    const eyeSize = segmentSize * 0.2;
+                    const eyeOffset = segmentSize * 0.2;
+                    ctx.fillRect(segment.x + offset + eyeOffset, segment.y + offset + eyeOffset, eyeSize, eyeSize);
+                    ctx.fillRect(segment.x + offset + segmentSize - eyeOffset - eyeSize, segment.y + offset + eyeOffset, eyeSize, eyeSize);
+                } else {
+                    // Body with gradient
+                    const bodyGradient = ctx.createLinearGradient(
+                        segment.x + offset,
+                        segment.y + offset,
+                        segment.x + offset + segmentSize,
+                        segment.y + offset + segmentSize
+                    );
+                    bodyGradient.addColorStop(0, '#818CF8');
+                    bodyGradient.addColorStop(1, '#A5B4FC');
+                    ctx.fillStyle = bodyGradient;
+                    ctx.fillRect(segment.x + offset, segment.y + offset, segmentSize, segmentSize);
+                }
+            });
+
+            // Draw food with modern design
+            const centerX = food.x + gridSize/2;
+            const centerY = food.y + gridSize/2;
+            const radius = gridSize/2.5;
+
+            // Glow effect
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius * 1.5, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(244, 63, 94, 0.2)';
+            ctx.fill();
+
+            // Main food circle
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            const foodGradient = ctx.createRadialGradient(
+                centerX - radius/3,
+                centerY - radius/3,
+                radius/4,
+                centerX,
+                centerY,
+                radius
+            );
+            foodGradient.addColorStop(0, '#F43F5E');
+            foodGradient.addColorStop(1, '#FB7185');
+            ctx.fillStyle = foodGradient;
+            ctx.fill();
+
+            // Highlight
+            ctx.beginPath();
+            ctx.arc(centerX - radius/3, centerY - radius/3, radius/4, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fill();
+        }
+
+        function endGame() {
+            isGameOver = true;
+            clearInterval(gameLoop);
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('gameOver').style.display = 'block';
+            saveScore();
+        }
+
+        function restartGame() {
+            document.getElementById('gameOver').style.display = 'none';
+            initGame();
+        }
+
+        function newGame() {
+            document.getElementById('gameOver').style.display = 'none';
+            document.getElementById('playerForm').style.display = 'block';
+            document.getElementById('playerName').value = '';
+            document.getElementById('playerName').focus();
+            document.querySelector('.game-container').style.display = 'none';
+        }
+
+        function updateTopScores(scores) {
+            const scoreList = document.querySelector('.score-list');
+            const scoreItems = scoreList.querySelectorAll('.score-item-top');
+            
+            for (let i = 0; i < 3; i++) {
+                const score = i < scores.length ? scores[i] : null;
+                const scoreItem = scoreItems[i];
+                const nameSpan = scoreItem.querySelector('.player-name');
+                const scoreSpan = scoreItem.querySelector('.player-score');
+                
+                if (score) {
+                    nameSpan.textContent = score.playerName;
+                    scoreSpan.textContent = score.score;
+                } else {
+                    nameSpan.textContent = '---';
+                    scoreSpan.textContent = '0';
+                }
+            }
+        }
+
+        function saveScore() {
+            fetch('/PlayZone/SaveScore', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    playerName: playerName,
+                    score: score
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.topScores) {
+                    updateTopScores(data.topScores);
+                }
+            })
+            .catch(error => console.error('Error saving score:', error));
+        }
+
+        // Add touch controls for mobile devices
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        document.addEventListener('touchstart', function(event) {
+            touchStartX = event.touches[0].clientX;
+            touchStartY = event.touches[0].clientY;
+        });
+
+        document.addEventListener('touchmove', function(event) {
+            if (!touchStartX || !touchStartY || isGameOver) return;
+
+            const touchEndX = event.touches[0].clientX;
+            const touchEndY = event.touches[0].clientY;
+
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+
+            // Require minimum swipe distance
+            const minSwipeDistance = 30;
+            
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (Math.abs(deltaX) > minSwipeDistance) {
+                    if (deltaX > 0 && direction.x === 0) {
+                        direction = {x: gridSize, y: 0};
+                    } else if (deltaX < 0 && direction.x === 0) {
+                        direction = {x: -gridSize, y: 0};
+                    }
+                }
+            } else {
+                if (Math.abs(deltaY) > minSwipeDistance) {
+                    if (deltaY > 0 && direction.y === 0) {
+                        direction = {x: 0, y: gridSize};
+                    } else if (deltaY < 0 && direction.y === 0) {
+                        direction = {x: 0, y: -gridSize};
+                    }
+                }
+            }
+
+            touchStartX = touchEndX;
+            touchStartY = touchEndY;
+        });
+
+        document.addEventListener('touchend', function() {
+            touchStartX = 0;
+            touchStartY = 0;
+        });
+
+        // Add keyboard controls
+        let lastKeyPress = 0;
+        const keyDebounceTime = 100;
+
+        document.addEventListener('keydown', (event) => {
+            if (isGameOver) return;
+
+            const now = Date.now();
+            if (now - lastKeyPress < keyDebounceTime) return; // Prevent rapid key presses
+            lastKeyPress = now;
+
+            switch (event.key) {
+                case 'ArrowUp':
+                    if (direction.y === 0) { // Prevent moving directly opposite
+                        direction = { x: 0, y: -gridSize };
+                    }
+                    break;
+                case 'ArrowDown':
+                    if (direction.y === 0) {
+                        direction = { x: 0, y: gridSize };
+                    }
+                    break;
+                case 'ArrowLeft':
+                    if (direction.x === 0) {
+                        direction = { x: -gridSize, y: 0 };
+                    }
+                    break;
+                case 'ArrowRight':
+                    if (direction.x === 0) {
+                        direction = { x: gridSize, y: 0 };
+                    }
+                    break;
+            }
+            event.preventDefault(); // Prevent page scrolling with arrow keys
+        });
+    </script>
+} 

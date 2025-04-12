@@ -1,0 +1,180 @@
+@model IEnumerable<AnastasiiaPortfolio.Models.Review>
+
+@{
+    ViewData["Title"] = "Rate My Portfolio";
+}
+
+<div class="container mt-5 pt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1 class="text-center mb-4">Rate My Portfolio</h1>
+            
+            <p class="lead text-center mb-5">
+                I'd love to hear what you think! Please leave a review by rating your experience and sharing your thoughts. 
+                Your feedback helps me improve and grow!
+            </p>
+
+            <div class="card mb-5">
+                <div class="card-body">
+                    <form id="reviewForm" asp-action="Create" method="post">
+                        <div class="mb-3">
+                            <label for="Name" class="form-label">Your Name</label>
+                            <input type="text" class="form-control" id="Name" name="Name" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Rating</label>
+                            <div class="rating">
+                                <input type="radio" id="star5" name="Rating" value="5" required>
+                                <label for="star5" title="5 stars">★</label>
+                                <input type="radio" id="star4" name="Rating" value="4">
+                                <label for="star4" title="4 stars">★</label>
+                                <input type="radio" id="star3" name="Rating" value="3">
+                                <label for="star3" title="3 stars">★</label>
+                                <input type="radio" id="star2" name="Rating" value="2">
+                                <label for="star2" title="2 stars">★</label>
+                                <input type="radio" id="star1" name="Rating" value="1">
+                                <label for="star1" title="1 star">★</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Comment" class="form-label">Your Feedback</label>
+                            <textarea class="form-control" id="Comment" name="Comment" rows="4" required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Submit Review</button>
+                    </form>
+                </div>
+            </div>
+
+            <h2 class="text-center mb-4">What Others Are Saying</h2>
+
+            <div id="reviewsContainer">
+                @if (Model.Any())
+                {
+                    foreach (var review in Model)
+                    {
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div>
+                                        <h5 class="card-title mb-1">@review.Name</h5>
+                                        <small class="text-muted">@review.CreatedAt.ToString("MMMM d, yyyy 'at' h:mm tt")</small>
+                                    </div>
+                                    <div class="rating-stars">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            <i class="fas fa-star @(i <= review.Rating ? "text-warning" : "text-muted")"></i>
+                                        }
+                                    </div>
+                                </div>
+                                <p class="card-text">@review.Comment</p>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-comments fa-3x mb-3"></i>
+                        <p class="lead">No reviews yet. Be the first to share your thoughts!</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#reviewForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        // Prepend the new review to the container
+                        $('#reviewsContainer').prepend(response);
+                        
+                        // Clear the form
+                        $('#reviewForm')[0].reset();
+                        
+                        // Remove the "no reviews" message if it exists
+                        $('#reviewsContainer .text-center.text-muted').remove();
+                        
+                        // Show success message
+                        alert('Thank you for your review!');
+                    },
+                    error: function() {
+                        alert('There was an error submitting your review. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
+
+    <style>
+        .rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+
+        .rating input {
+            display: none;
+        }
+
+        .rating label {
+            font-size: 2rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .rating input:checked ~ label,
+        .rating label:hover,
+        .rating label:hover ~ label {
+            color: #ffd700;
+        }
+
+        .reviews-container {
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .reviews-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .reviews-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .reviews-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .reviews-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .rating-stars {
+            font-size: 1.2rem;
+        }
+
+        .card {
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+} 

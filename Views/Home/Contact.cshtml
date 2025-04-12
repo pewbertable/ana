@@ -1,0 +1,295 @@
+@model AnastasiiaPortfolio.Models.ContactViewModel
+
+@{
+    ViewData["Title"] = "Contact";
+}
+
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-4 fw-bold mb-3">Get in Touch</h1>
+            <p class="lead text-secondary">I'd love to hear from you. Let's discuss your project or just say hello!</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Contact Information -->
+        <div class="col-lg-4 mb-4 mb-lg-0">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="h5 mb-4">Contact Information</h3>
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="contact-icon bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                            <i class="fas fa-envelope text-primary"></i>
+                        </div>
+                        <div>
+                            <h4 class="h6 mb-1">Email</h4>
+                            <p class="text-secondary mb-0">contact@example.com</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="contact-icon bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                            <i class="fas fa-map-marker-alt text-primary"></i>
+                        </div>
+                        <div>
+                            <h4 class="h6 mb-1">Location</h4>
+                            <p class="text-secondary mb-0">City, Country</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="contact-icon bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                            <i class="fas fa-phone text-primary"></i>
+                        </div>
+                        <div>
+                            <h4 class="h6 mb-1">Phone</h4>
+                            <p class="text-secondary mb-0">+1 234 567 890</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="h5 mb-4">Send a Message</h3>
+                    <form asp-action="Contact" method="post">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Your Name" required>
+                                    <label for="name">Your Name</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="Your Email" required>
+                                    <label for="email">Your Email</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="subject" name="subject" placeholder="Subject" required>
+                                    <label for="subject">Subject</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea class="form-control" id="message" name="message" placeholder="Your Message" style="height: 150px" required></textarea>
+                                    <label for="message">Your Message</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Social Links -->
+    <div class="row mt-5">
+        <div class="col-12 text-center">
+            <h3 class="h5 mb-4">Connect With Me</h3>
+            <div class="d-flex justify-content-center gap-4">
+                <a href="#" class="text-muted social-link">
+                    <i class="fab fa-github fa-2x"></i>
+                </a>
+                <a href="#" class="text-muted social-link">
+                    <i class="fab fa-linkedin fa-2x"></i>
+                </a>
+                <a href="#" class="text-muted social-link">
+                    <i class="fab fa-twitter fa-2x"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        box-shadow: var(--shadow);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .contact-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(43, 43, 43, 0.1);
+    }
+
+    .form-floating > .form-control {
+        border: 1px solid #D4D4D4;
+        border-radius: 0.375rem;
+    }
+
+    .form-floating > .form-control:focus {
+        border-color: #2B2B2B;
+        box-shadow: 0 0 0 0.2rem rgba(43, 43, 43, 0.1);
+    }
+
+    .social-link {
+        transition: all 0.2s ease;
+    }
+
+    .social-link:hover {
+        color: #2B2B2B !important;
+        transform: translateY(-2px);
+    }
+
+    .btn-primary {
+        padding: 0.75rem 1.5rem;
+    }
+
+    .contact-info {
+        background-color: var(--light-grey);
+        padding: 2rem;
+        border-radius: 0.5rem;
+    }
+
+    .contact-form {
+        background-color: var(--lsalt);
+        padding: 2rem;
+        border-radius: 0.5rem;
+        box-shadow: var(--shadow);
+    }
+
+    .form-control:focus {
+        border-color: var(--pepper);
+        box-shadow: 0 0 0 0.2rem var(--light-grey);
+    }
+
+    .btn-primary {
+        background-color: var(--pepper);
+        border-color: var(--pepper);
+        color: var(--lsalt);
+    }
+
+    .btn-primary:hover {
+        background-color: var(--mid-grey);
+        border-color: var(--mid-grey);
+    }
+
+    .text-muted {
+        color: var(--mid-grey) !important;
+    }
+
+    .social-links a {
+        color: var(--pepper);
+    }
+
+    .social-links a:hover {
+        color: var(--mid-grey);
+    }
+
+    .contact-icon {
+        color: var(--pepper);
+    }
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+@section Styles {
+    <style>
+        .contact-section {
+            background-color: #D4D4D4;
+            padding: 4rem 0;
+        }
+
+        .contact-container {
+            background-color: #FFFFFF;
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid #D4D4D4;
+            box-shadow: 0 4px 12px rgba(43, 43, 43, 0.1);
+        }
+
+        .contact-title {
+            color: #B3B3B3;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .contact-info {
+            color: #2B2B2B;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .form-control {
+            border: 2px solid #D4D4D4;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-control:focus {
+            border-color: #2B2B2B;
+            box-shadow: 0 0 0 0.2rem rgba(43, 43, 43, 0.1);
+        }
+
+        .btn-send {
+            background-color: var(--color-terracotta);
+            color: var(--white);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-send:hover {
+            background-color: var(--color-purple);
+            transform: translateY(-2px);
+        }
+
+        .contact-links {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .contact-link {
+            color: var(--color-terracotta);
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .contact-link:hover {
+            color: var(--color-purple);
+        }
+
+        .lead.text-secondary {
+            color: #B3B3B3;
+        }
+
+        .text-secondary {
+            color: #B3B3B3;
+        }
+
+        .bg-primary {
+            background-color: #2B2B2B;
+            color: #FFFFFF;
+        }
+
+        .text-primary {
+            color: #2B2B2B;
+        }
+    </style>
+} 

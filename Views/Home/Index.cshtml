@@ -1,0 +1,1246 @@
+﻿@model AnastasiiaPortfolio.Models.HomeViewModel
+
+@{
+    ViewData["Title"] = "Home";
+}
+
+@section Styles {
+    <style>
+        .hero-section {
+            padding: 4rem 0;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .hero-content {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid #D4D4D4;
+            box-shadow: 0 4px 12px rgba(43, 43, 43, 0.1);
+            text-align: center;
+        }
+
+        .hero-title, .section-title, .h5, h1, h2, h3 {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 700;
+        }
+
+        .hero-title {
+            color: #2B2B2B;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-subtitle {
+            color: #B3B3B3;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .deployment-section {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            border: 1px solid #D4D4D4;
+            text-align: center;
+        }
+
+        .deployment-link {
+            color: #B3B3B3;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .deployment-link:hover {
+            color: #2B2B2B;
+            text-decoration: underline;
+        }
+
+        .login-info {
+            margin-top: 1rem;
+            color: #2B2B2B;
+        }
+
+        .section-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            border: 1px solid #D4D4D4;
+        }
+
+        .section-title {
+            color: var(--pepper);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .skill-card {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .skill-icon {
+            font-size: 2.5rem;
+            color: #2B2B2B;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .skill-card h3 {
+            color: #2B2B2B;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .skill-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .skill-list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            color: #444;
+            font-size: 1rem;
+        }
+
+        .skill-list li i {
+            margin-right: 0.75rem;
+            color: #2B2B2B;
+            font-size: 0.9rem;
+        }
+
+        .experience-item {
+            border-left: 3px solid var(--pepper);
+            padding-left: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .experience-title {
+            color: var(--pepper);
+            margin-bottom: 0.5rem;
+        }
+
+        .experience-company {
+            color: var(--mid-grey);
+            font-weight: 500;
+        }
+
+        .project-card {
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(5px);
+            border: 1px solid #D4D4D4;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .project-card:hover {
+            border-color: #2B2B2B;
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(43, 43, 43, 0.1);
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .project-title {
+            color: #2B2B2B;
+            margin-bottom: 1rem;
+        }
+
+        .contact-section {
+            padding: 0;
+            margin-top: 0;
+        }
+
+        .contact-form {
+            background-color: transparent;
+            backdrop-filter: none;
+            border-radius: 0;
+            padding: 0;
+            border: none;
+            box-shadow: none;
+        }
+
+        .form-control {
+            /* General form-control reset or override if needed, else handled by #contact .form-control */
+        }
+
+        .btn-send {
+            /* Reset styles */
+        }
+
+        .timeline-container {
+            background-color: var(--lsalt);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--light-grey);
+        }
+
+        .timeline-item {
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .profile-image {
+            max-width: 60%; /* Restore relative width */
+            height: auto;
+            display: block; /* Restore display block */
+            margin: 0 auto; /* Restore auto margin */
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        #skills {
+            background-color: var(--lsalt);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--light-grey);
+            margin-bottom: 3rem;
+        }
+
+        #education {
+            background-color: var(--lsalt);
+            padding: 4rem 0;
+            margin-bottom: 3rem;
+        }
+
+        .education-card {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 2.5rem;
+            height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .education-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .education-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .diploma-title {
+            color: #2B2B2B;
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .education-meta {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .education-meta .separator {
+            margin: 0 0.75rem;
+            color: #999;
+        }
+
+        .education-content {
+            padding: 0 0.5rem;
+        }
+
+        .expertise-section, .achievements-section {
+            margin-bottom: 2rem;
+        }
+
+        .expertise-section h4, .achievements-section h4 {
+            color: #2B2B2B;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .expertise-list, .achievements-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .expertise-list li, .achievements-list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            color: #444;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .expertise-list li i, .achievements-list li i {
+            margin-right: 1rem;
+            color: #2B2B2B;
+            font-size: 1.1rem;
+            min-width: 1.5rem;
+            text-align: center;
+        }
+
+        @@media (max-width: 768px) {
+            .education-card {
+                padding: 1.5rem;
+            }
+
+            .diploma-title {
+                font-size: 1.5rem;
+            }
+
+            .education-meta {
+                font-size: 1rem;
+            }
+
+            .expertise-list li, .achievements-list li {
+                font-size: 0.95rem;
+            }
+
+            .skill-card {
+                padding: 1.5rem;
+            }
+
+            .skill-icon {
+                font-size: 2rem;
+            }
+
+            .skill-card h3 {
+                font-size: 1.3rem;
+            }
+
+            .skill-list li {
+                font-size: 0.9rem;
+            }
+        }
+
+        .separator {
+            margin: 0 0.5rem;
+            color: #999;
+        }
+
+        .expertise-section {
+            margin-bottom: 2rem;
+        }
+
+        .expertise-section h3 {
+            color: #2B2B2B;
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .expertise-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .expertise-item:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .expertise-icon {
+            font-size: 1.2rem;
+            margin-right: 1rem;
+            color: #2B2B2B;
+        }
+
+        .expertise-text {
+            font-size: 1rem;
+            color: #444;
+        }
+
+        .achievements-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .achievements-section h3,
+        .achievements-section h4 {
+            color: #2B2B2B;
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .achievements-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .achievements-list li,
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .achievements-list li:hover,
+        .achievement-item:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .achievements-list li i,
+        .achievement-icon {
+            margin-right: 1rem;
+            font-size: 1.1rem;
+            color: #2B2B2B;
+        }
+
+        .achievement-text {
+            color: #444;
+        }
+
+        /* Footer Styles */
+        .site-footer {
+            /* Remove max-width and centering for the block */
+            /* max-width: 900px; */
+            /* margin-left: auto; */
+            /* margin-right: auto; */
+            border-radius: 0; /* Remove border-radius for full-width */
+            background-color: #f8f9fa; /* Light background */
+            padding: 1rem 0; /* Reduce vertical padding for skinny footer */
+            margin-top: 4rem;
+            border-top: 1px solid #e7e7e7;
+            text-align: center;
+            color: #6c757d; /* Subtle text color */
+            box-shadow: none; /* Remove shadow for full-width */
+        }
+
+        .footer-content {
+            max-width: 900px; /* Constrain the content width */
+            margin: 0 auto; /* Center the content */
+            display: flex;
+            flex-direction: column; /* Stack socials and copyright */
+            align-items: center; /* Center items horizontally */
+            /* Optional: Use row for side-by-side on larger screens */
+            /* @@media (min-width: 768px) { */ /* Escaped */
+            /*    flex-direction: row; */
+            /*    justify-content: space-between; */
+            /* } */
+        }
+
+        .footer-socials {
+            margin-bottom: 0.5rem; /* Further reduce margin */
+            display: flex;
+            gap: 1.5rem;
+            /* Optional: Add margin-top on small screens if stacked */
+            /* @@media (max-width: 767px) { */ /* Escaped */
+            /*     margin-top: 0.5rem; */
+            /* } */
+        }
+
+        .social-icon {
+            color: #6c757d;
+            font-size: 1.2rem; /* Even smaller icons */
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .social-icon:hover {
+            color: #2B2B2B; /* Use primary dark color on hover */
+            transform: translateY(-2px);
+        }
+
+        .footer-copyright {
+            font-size: 0.8rem; /* Even smaller text */
+        }
+
+        /* Contact Section Styles */
+        #contact {
+            background-color: var(--lsalt);
+            padding: 3rem 2rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--light-grey);
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        #contact h2 {
+            color: var(--pepper);
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        #contact h4 {
+            color: #2B2B2B;
+            font-weight: 600;
+            margin-bottom: 1.25rem; /* Increased spacing below heading */
+        }
+
+        #contact .col-md-6 p {
+            line-height: 1.6; /* Improve readability of paragraph */
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-info {
+            margin-top: 2rem; /* Added more space above contact items */
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.25rem; /* Increased spacing between items */
+            color: #444;
+            font-size: 1rem; /* Ensure consistent font size */
+        }
+
+        .contact-item i {
+            color: var(--pepper);
+            font-size: 1.1rem; /* Slightly reduced icon size */
+            margin-right: 1.25rem; /* Increased space after icon */
+            width: 20px; /* Ensure consistent icon spacing */
+            text-align: center;
+            flex-shrink: 0; /* Prevent icon from shrinking */
+        }
+
+        .contact-item a,
+        .contact-item span {
+            color: #444;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            line-height: 1.5; /* Ensure consistent line height */
+        }
+
+        .contact-item a:hover {
+            color: var(--pepper);
+            text-decoration: underline;
+        }
+
+        /* Form Styling */
+        #contact .form-label {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        #contact .form-control {
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        #contact .form-control:focus {
+            border-color: var(--pepper);
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(193, 118, 109, 0.25); /* Using pepper color with alpha */
+        }
+
+        #contact textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        #contact .btn-primary {
+            background-color: var(--pepper);
+            border-color: var(--pepper);
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #contact .btn-primary:hover {
+            background-color: #a55e54; /* Darker pepper */
+            border-color: #a55e54;
+            transform: translateY(-2px);
+        }
+
+        #contact .alert-success {
+            background-color: #d1e7dd;
+            border-color: #badbcc;
+            color: #0f5132;
+            border-radius: 8px;
+        }
+    </style>
+}
+
+<div id="home" class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 order-lg-1">
+                <h1 class="display-4 fw-bold">Anastasiia Khrustaleva </h1>
+                <p class="lead">Full-Stack Developer and IT Support Specialist located in Canada. Passionate about creating efficient software solutions and providing exceptional technical support.</p>
+                <div class="d-flex gap-1 flex-wrap">
+                    <a href="#projects" class="btn btn-primary">
+                        <i class="fas fa-code me-1"></i>View My Work
+                    </a>
+                    <a href="#contact" class="btn btn-outline-primary">
+                        <i class="fas fa-envelope me-1"></i>Contact Me
+                    </a>
+                    <a asp-action="DownloadResume" asp-controller="Home" class="btn btn-secondary">
+                        <i class="fas fa-download me-1"></i>Download Resume
+                    </a>
+                    <a asp-action="DownloadReferences" asp-controller="Home" class="btn btn-secondary btn-same-length" id="downloadReferencesBtn">
+                        <i class="fas fa-download me-1"></i>Download References
+                    </a>
+                </div>
+                <div class="mt-4">
+                    <a href="https://www.linkedin.com/in/anastasiia-khrustaleva-29a180100/" target="_blank" class="text-decoration-none social-link">
+                        <i class="fab fa-linkedin me-2"></i>Connect on LinkedIn
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 order-lg-2">
+                <div class="hero-image">
+                    <img src="/images/hero-image.jpeg" alt="Anastasiia Khrustaleva" class="profile-image">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Skills & Expertise Section -->
+<section id="skills" class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Skills & Expertise</h2>
+        <div class="row">
+            <!-- Programming & Development -->
+            <div class="col-md-4 mb-4">
+                <div class="skill-card">
+                    <div class="skill-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Programming & Development</h3>
+                    <ul class="skill-list">
+                        <li><i class="fas fa-chevron-right"></i> C# & .NET Core</li>
+                        <li><i class="fas fa-chevron-right"></i> ASP.NET MVC</li>
+                        <li><i class="fas fa-chevron-right"></i> Entity Framework</li>
+                        <li><i class="fas fa-chevron-right"></i> SQL Server</li>
+                        <li><i class="fas fa-chevron-right"></i> HTML5 & CSS3</li>
+                        <li><i class="fas fa-chevron-right"></i> JavaScript & jQuery</li>
+                        <li><i class="fas fa-chevron-right"></i> Bootstrap</li>
+                        <li><i class="fas fa-chevron-right"></i> Git Version Control</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Hospitality Management -->
+            <div class="col-md-4 mb-4">
+                <div class="skill-card">
+                    <div class="skill-icon">
+                        <i class="fas fa-hotel"></i>
+                    </div>
+                    <h3>Hospitality Management</h3>
+                    <ul class="skill-list">
+                        <li><i class="fas fa-chevron-right"></i> Front Office Operations</li>
+                        <li><i class="fas fa-chevron-right"></i> Revenue Management</li>
+                        <li><i class="fas fa-chevron-right"></i> Guest Relations</li>
+                        <li><i class="fas fa-chevron-right"></i> Housekeeping Management</li>
+                        <li><i class="fas fa-chevron-right"></i> Event Planning</li>
+                        <li><i class="fas fa-chevron-right"></i> Food & Beverage Service</li>
+                        <li><i class="fas fa-chevron-right"></i> Quality Assurance</li>
+                        <li><i class="fas fa-chevron-right"></i> Staff Training</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Soft Skills -->
+            <div class="col-md-4 mb-4">
+                <div class="skill-card">
+                    <div class="skill-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Soft Skills</h3>
+                    <ul class="skill-list">
+                        <li><i class="fas fa-chevron-right"></i> Leadership</li>
+                        <li><i class="fas fa-chevron-right"></i> Team Collaboration</li>
+                        <li><i class="fas fa-chevron-right"></i> Problem Solving</li>
+                        <li><i class="fas fa-chevron-right"></i> Time Management</li>
+                        <li><i class="fas fa-chevron-right"></i> Communication</li>
+                        <li><i class="fas fa-chevron-right"></i> Adaptability</li>
+                        <li><i class="fas fa-chevron-right"></i> Customer Service</li>
+                        <li><i class="fas fa-chevron-right"></i> Multitasking</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Work Experience -->
+<section id="experience" class="section-padding">
+    <div class="container">
+        <h2 class="section-title text-center mb-5">Work Experience</h2>
+        <div class="timeline-container">
+            <div class="timeline-item fade-in">
+                <h3 class="h5">IT Support & Software Technician</h3>
+                <p class="text-secondary mb-2">Niagara College | Jan 2024 – Present</p>
+                <ul class="mb-0">
+                    <li>Provide front-line technical support to students and faculty</li>
+                    <li>Assist in maintaining college-wide applications</li>
+                    <li>Develop solutions to optimize system performance</li>
+                </ul>
+            </div>
+            <div class="timeline-item fade-in">
+                <h3 class="h5">Machine Learning Content Analyst</h3>
+                <p class="text-secondary mb-2">Outlier | October 2024 – Present</p>
+                <ul class="mb-0">
+                    <li>Collaborate with AI developers on content generation models</li>
+                    <li>Provide feedback for improving writing clarity</li>
+                    <li>Ensure content quality standards</li>
+                </ul>
+            </div>
+            <div class="timeline-item fade-in">
+                <h3 class="h5">Operations Manager</h3>
+                <p class="text-secondary mb-2">LA Fitness | Mar 2024 – Sep 2024</p>
+                <ul class="mb-0">
+                    <li>Managed daily operations and business processes</li>
+                    <li>Handled scheduling, budgeting, and facility improvements</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+<section id="education" class="education-section">
+    <div class="container">
+        <h2 class="section-title text-center mb-5">Education</h2>
+        <div class="row">
+            <!-- Computer Programming Diploma -->
+            <div class="col-md-6 mb-4">
+                <div class="education-card">
+                    <div class="education-header">
+                        <h3 class="diploma-title">Diploma in Computer Programming</h3>
+                        <div class="education-meta">
+                            <span class="institution">Niagara College</span>
+                            <span class="separator">|</span>
+                            <span class="date">Expected April 2025</span>
+                        </div>
+                    </div>
+                    
+                    <div class="education-content">
+                        <div class="expertise-section">
+                            <h4>Technical Expertise</h4>
+                            <ul class="expertise-list">
+                                <li><i class="fas fa-code"></i> Advanced Object-Oriented Programming (C#)</li>
+                                <li><i class="fas fa-laptop-code"></i> Full-Stack Web Development</li>
+                                <li><i class="fas fa-database"></i> Database Design & Management</li>
+                                <li><i class="fas fa-cloud"></i> Cloud Computing & Azure Services</li>
+                                <li><i class="fab fa-github"></i> Version Control & Collaboration</li>
+                            </ul>
+                        </div>
+
+                        <div class="achievements-section">
+                            <h4>Key Achievements</h4>
+                            <ul class="achievements-list">
+                                <li><i class="fas fa-trophy"></i> Hired as a Campus IT Support Technician </li>
+                                <li><i class="fas fa-star"></i> Project Graded with Honors for Excellence </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hospitality Management Diploma -->
+            <div class="col-md-6 mb-4">
+                <div class="education-card">
+                    <div class="education-header">
+                        <h3 class="diploma-title">Diploma in Hospitality Management</h3>
+                        <div class="education-meta">
+                            <span class="institution">Niagara College</span>
+                            <span class="separator">|</span>
+                            <span class="date">2017</span>
+                        </div>
+                    </div>
+
+                    <div class="education-content">
+                        <div class="expertise-section">
+                            <h4>Professional Development</h4>
+                            <ul class="expertise-list">
+                                <li><i class="fas fa-user-tie"></i> Customer Service Excellence</li>
+                                <li><i class="fas fa-handshake"></i> Client Relationship Management</li>
+                                <li><i class="fas fa-lightbulb"></i> Problem Resolution & Decision Making</li>
+                                <li><i class="fas fa-users"></i> Team Leadership & Project Management</li>
+                                <li><i class="fas fa-chart-line"></i> Business Operations & Financial Management</li>
+                            </ul>
+                        </div>
+
+                        <div class="achievements-section">
+                            <h4>Key Achievements</h4>
+                            <ul class="achievements-list">
+                                <li><i class="fas fa-graduation-cap"></i> Graduated with Honours</li>
+                                <li><i class="fas fa-star"></i> Innovative Service Protocol Development</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="projects" class="section-padding">
+    <div class="container">
+        <h2 class="section-title text-center mb-5">Featured Projects</h2>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="project-card card">
+                    <div class="card-body">
+                        <h3 class="h5">Gym Membership Application</h3>
+                        <p class="text-secondary mb-3">Project Manager | Eastern Digital</p>
+                        <p class="mb-3">Led the end-to-end development of a comprehensive gym membership management system. Implemented secure user authentication, membership tracking, payment processing, and class scheduling features.</p>
+                        <div class="badges-container">
+                            <span class="badge">C#</span>
+                            <span class="badge">.NET MVC</span>
+                            <span class="badge">SQL</span>
+                            <span class="badge">Entity Framework</span>
+                            <span class="badge">RESTful API</span>
+                        </div>
+                        <div class="project-details">
+                            <p class="mb-2"><strong>Key Features:</strong></p>
+                            <ul>
+                                <li>Secure user authentication and authorization</li>
+                                <li>Automated payment processing and billing</li>
+                                <li>Real-time class scheduling and attendance tracking</li>
+                                <li>Comprehensive reporting and analytics dashboard</li>
+                                <li>Mobile-responsive design for all devices</li>
+                            </ul>
+                        </div>
+                        <div class="deployment-info mt-3">
+                            <p class="mb-2"><strong>Live Deployment:</strong></p>
+                          
+                           
+                            <a href="https://gymmanagement20241203090503.azurewebsites.net/" class="deployment-link" target="_blank">https://gymmanagement20241203090503.azurewebsites.net/</a>
+                            <p></p>
+                            <div class="login-info mt-2">
+                                <p class="mb-1"><strong>Login credentials:</strong></p>
+                                <p class="mb-1">Email: admin@outlook.com</p>
+                                <p class="mb-0">Password: Pa55w@rd</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="project-card card">
+                    <div class="card-body">
+                        <h3 class="h5">CRM Management System</h3>
+                        <p class="text-secondary mb-3">Project Manager | Eastern Digital</p>
+                        <p class="mb-3">Led the development of a comprehensive CRM system for managing customer relationships and business processes. Implemented advanced features for customer data management, sales tracking, and analytics.</p>
+                        <div class="badges-container">
+                            <span class="badge">C#</span>
+                            <span class="badge">.NET MVC</span>
+                            <span class="badge">SQL</span>
+                            <span class="badge">Entity Framework</span>
+                            <span class="badge">RESTful API</span>
+                        </div>
+                        <div class="project-details">
+                            <p class="mb-2"><strong>Key Features:</strong></p>
+                            <ul>
+                                <li>Customer data management and tracking</li>
+                                <li>Sales pipeline visualization</li>
+                                <li>Automated reporting and analytics</li>
+                                <li>Task and activity management</li>
+                                <li>Role-based access control</li>
+                            </ul>
+                        </div>
+                        <div class="deployment-info mt-3">
+                            <p class="mb-2"><strong>Live Deployment:</strong></p>
+                            <a href="https://nia-a5bmgaebhggncyh5.canadacentral-01.azurewebsites.net/UserManagement" class="deployment-link" target="_blank">https://nia-a5bmgaebhggncyh5.canadacentral-01.azurewebsites.net/UserManagement</a>
+                            <div class="login-info mt-2">
+                                <p class="mb-1"><strong>Login credentials:</strong></p>
+                                <p class="mb-1">Email: admin@admin.ca</p>
+                                <p class="mb-0">Password: admintest</p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Contact Me</h2>
+        <div class="row">
+            <div class="col-md-6 mb-4 mb-md-0">
+                <h4>Get in Touch</h4>
+                <p>I'm always open to discussing new projects, creative ideas, or opportunities to be part of your visions. Feel free to reach out!</p>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <a href="mailto:anastasiiakhrustaleva@gmail.com">anastasiiakhrustaleva@gmail.com</a>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span>+1 905 3241507</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fab fa-linkedin"></i>
+                        <a href="https://www.linkedin.com/in/anastasiia-khrustaleva-29a180100/" target="_blank">LinkedIn Profile</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h4>Send a Message</h4>
+                <form asp-controller="Home" asp-action="Contact" method="post">
+                    <div class="mb-3">
+                        <label asp-for="ContactForm.Name" class="form-label">Name</label>
+                        <input asp-for="ContactForm.Name" class="form-control" required>
+                        <span asp-validation-for="ContactForm.Name" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ContactForm.Email" class="form-label">Email</label>
+                        <input asp-for="ContactForm.Email" type="email" class="form-control" required>
+                        <span asp-validation-for="ContactForm.Email" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ContactForm.Subject" class="form-label">Subject</label>
+                        <input asp-for="ContactForm.Subject" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ContactForm.Message" class="form-label">Message</label>
+                        <textarea asp-for="ContactForm.Message" class="form-control" rows="4" required></textarea>
+                        <span asp-validation-for="ContactForm.Message" class="text-danger"></span>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </div>
+                    @if (TempData["MessageSent"] != null)
+                    {
+                        <div class="alert alert-success mt-3">@TempData["MessageSent"]</div>
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="site-footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-socials">
+                <a href="https://www.linkedin.com/in/anastasiia-khrustaleva-29a180100/" target="_blank" title="LinkedIn" class="social-icon">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="https://github.com/pewbertable/CrmTechTitans" target="_blank" title="GitHub" class="social-icon">
+                    <i class="fab fa-github"></i>
+                </a>
+            </div>
+            <div class="footer-copyright">
+                &copy; @DateTime.Now.Year Anastasiia Khrustaleva. All Rights Reserved.
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="successModalLabel">Message Sent!</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        THANK YOU, MESSAGE SENT. ANASTASIIA WILL GET BACK TO YOU SHORTLY.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if the success modal should be shown (based on TempData set in Controller)
+            @if (TempData["ShowSuccessModal"] as bool? == true)
+            {
+                <text>
+                var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                successModal.show();
+                </text>
+            }
+
+            // Navbar scroll behavior
+            const navbar = document.querySelector('.navbar');
+            const scrollThreshold = 50;
+
+            function updateNavbar() {
+                if (window.scrollY > scrollThreshold) {
+                    navbar.classList.add('navbar-scrolled');
+                } else {
+                    navbar.classList.remove('navbar-scrolled');
+                }
+            }
+
+            window.addEventListener('scroll', updateNavbar);
+            updateNavbar(); // Initial check
+
+            // Smooth scrolling with offset for navbar
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        const navbarHeight = navbar.offsetHeight;
+                        const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
+                        window.scrollTo({
+                            top: targetPosition - navbarHeight,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Enhanced fade-in animation
+            const observerOptions = {
+                threshold: 0.2,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                        // Optionally unobserve after animation
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Observe elements for animation
+            document.querySelectorAll('.card, .timeline-item, .section-title, .skill-category').forEach((el) => {
+                observer.observe(el);
+            });
+
+            // Scroll progress indicator
+            const scrollProgress = document.createElement('div');
+            scrollProgress.className = 'scroll-progress';
+            document.body.appendChild(scrollProgress);
+
+            function updateScrollProgress() {
+                const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (window.scrollY / windowHeight) * 100;
+                scrollProgress.style.transform = `scaleX(${scrolled / 100})`;
+            }
+
+            window.addEventListener('scroll', updateScrollProgress);
+            updateScrollProgress(); // Initial check
+
+            // Enhanced Skill Item Interactions
+            document.querySelectorAll('.skill-item').forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(10px) translateY(-2px)';
+                    this.style.transition = 'all 0.3s ease';
+                });
+
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'none';
+                });
+            });
+
+            // Project Card Hover Effects
+            document.querySelectorAll('.project-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.querySelectorAll('.badge').forEach(badge => {
+                        badge.style.transform = 'translateY(-3px)';
+                        badge.style.boxShadow = 'var(--shadow-md)';
+                    });
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.querySelectorAll('.badge').forEach(badge => {
+                        badge.style.transform = 'none';
+                        badge.style.boxShadow = 'none';
+                    });
+                });
+            });
+
+            // Timeline Item Interactions
+            document.querySelectorAll('.timeline-item').forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    const bullet = this.querySelector('::before');
+                    if (bullet) {
+                        bullet.style.transform = 'scale(1.2)';
+                        bullet.style.backgroundColor = 'var(--secondary-color)';
+                    }
+                });
+            });
+
+            // Parallax Effect for Hero Section
+            const heroSection = document.querySelector('.hero-section');
+            const heroImage = document.querySelector('.hero-image');
+            
+            window.addEventListener('scroll', function() {
+                if (heroSection && heroImage) {
+                    const scrolled = window.pageYOffset;
+                    const rate = scrolled * 0.3;
+                    heroImage.style.transform = `translate3d(0px, ${rate}px, 0px)`;
+                }
+            });
+
+            // Smooth Reveal for Sections
+            const revealSection = (entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('section-revealed');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            };
+
+            const sectionObserver = new IntersectionObserver(revealSection, {
+                root: null,
+                threshold: 0.15,
+            });
+
+            document.querySelectorAll('section').forEach(section => {
+                section.classList.add('section-hidden');
+                sectionObserver.observe(section);
+            });
+
+            // Enhanced Form Validation
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                const inputs = contactForm.querySelectorAll('input, textarea');
+                const messageInput = document.getElementById('message');
+                const messageCount = document.getElementById('messageCount');
+                
+                // Character counter for message
+                messageInput.addEventListener('input', function() {
+                    const count = this.value.length;
+                    messageCount.textContent = count;
+                    
+                    if (count > 450) {
+                        messageCount.classList.add('text-warning');
+                    } else if (count > 490) {
+                        messageCount.classList.add('text-danger');
+                    } else {
+                        messageCount.classList.remove('text-warning', 'text-danger');
+                    }
+                });
+
+                // Real-time validation
+                inputs.forEach(input => {
+                    ['input', 'blur'].forEach(eventType => {
+                        input.addEventListener(eventType, function() {
+                            validateInput(this);
+                        });
+                    });
+                });
+
+                // Form submission
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    if (!this.checkValidity()) {
+                        e.stopPropagation();
+                        this.classList.add('was-validated');
+                        return;
+                    }
+                    
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const formData = new FormData(this);
+                    
+                    // Show loading state
+                    submitBtn.classList.add('loading');
+                    submitBtn.disabled = true;
+                    
+                    // Simulate form submission (replace with actual AJAX call)
+                    setTimeout(() => {
+                        submitBtn.classList.remove('loading');
+                        submitBtn.disabled = false;
+                        document.getElementById('successMessage').classList.remove('d-none');
+                        this.reset();
+                        this.classList.remove('was-validated');
+                        inputs.forEach(input => {
+                            input.classList.remove('is-valid', 'is-invalid');
+                        });
+                        messageCount.textContent = '0';
+                    }, 1500);
+                });
+            }
+
+            // Input validation helper
+            function validateInput(input) {
+                const isValid = input.checkValidity();
+                input.classList.toggle('is-valid', isValid);
+                input.classList.toggle('is-invalid', !isValid);
+                
+                // Special validation for name
+                if (input.id === 'name') {
+                    const nameRegex = /^[A-Za-z\s]{2,50}$/;
+                    const isValidName = nameRegex.test(input.value);
+                    input.classList.toggle('is-valid', isValidName);
+                    input.classList.toggle('is-invalid', !isValidName);
+                }
+                
+                // Special validation for email
+                if (input.id === 'email') {
+                    const isValidEmail = input.checkValidity();
+                    input.classList.toggle('is-valid', isValidEmail);
+                    input.classList.toggle('is-invalid', !isValidEmail);
+                }
+            }
+
+            // Add active state to navigation links based on scroll position
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+
+            function updateActiveNavLink() {
+                const scrollPosition = window.scrollY + navbar.offsetHeight + 100;
+
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.offsetHeight;
+                    const sectionId = section.getAttribute('id');
+                    
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${sectionId}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', updateActiveNavLink);
+            updateActiveNavLink(); // Initial check
+        });
+    </script>
+}

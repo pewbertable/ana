@@ -1,0 +1,201 @@
+@model IEnumerable<AnastasiiaPortfolio.Models.Project>
+
+@{
+    ViewData["Title"] = "Portfolio";
+}
+
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-4 fw-bold mb-3">My Portfolio</h1>
+            <p class="lead text-secondary">A collection of my projects showcasing my skills and experience in web development.</p>
+        </div>
+    </div>
+
+    <!-- Portfolio Filters -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                    <i class="fas fa-filter text-primary"></i>
+                </span>
+                <select class="form-select border-start-0" id="categoryFilter">
+                    <option value="">All Categories</option>
+                    <option value="Web Application">Web Applications</option>
+                    <option value="Mobile App">Mobile Apps</option>
+                    <option value="Desktop App">Desktop Apps</option>
+                    <option value="API">APIs</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                    <i class="fas fa-sort text-primary"></i>
+                </span>
+                <select class="form-select border-start-0" id="sortOption">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="name">Name (A-Z)</option>
+                    <option value="rating">Highest Rated</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portfolio Grid -->
+    <div class="row g-4" id="portfolioGrid">
+        @foreach (var project in Model)
+        {
+            <div class="col-md-6 col-lg-4 portfolio-item" data-category="@project.Category">
+                <div class="card h-100">
+                    <div class="card-img-wrapper">
+                        <img src="@project.ImageUrl" class="card-img-top" alt="@project.Title">
+                        <div class="card-img-overlay d-flex align-items-center justify-content-center">
+                            <div class="text-center">
+                                <a asp-action="Details" asp-route-id="@project.Id" class="btn btn-light btn-sm">
+                                    <i class="fas fa-eye me-2"></i>View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="h5 mb-2">@project.Title</h3>
+                        <p class="text-secondary small mb-2">@project.Category</p>
+                        <p class="text-secondary mb-3">@project.Description</p>
+                        <div class="d-flex gap-2 mb-3">
+                            @foreach (var tech in project.Technologies.Split(','))
+                            {
+                                <span class="badge bg-primary">@tech.Trim()</span>
+                            }
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar-alt me-1"></i>
+                                @project.DateCompleted.ToString("MMMM yyyy")
+                            </small>
+                            <div class="d-flex gap-2">
+                                @if (!string.IsNullOrEmpty(project.ProjectUrl))
+                                {
+                                    <a href="@project.ProjectUrl" class="btn btn-sm btn-outline-primary" target="_blank">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                }
+                                @if (!string.IsNullOrEmpty(project.GitHubUrl))
+                                {
+                                    <a href="@project.GitHubUrl" class="btn btn-sm btn-outline-dark" target="_blank">
+                                        <i class="fab fa-github"></i>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .card-img-wrapper {
+        position: relative;
+        overflow: hidden;
+        padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    }
+
+    .card-img-top {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .card-img-overlay {
+        background: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .card:hover .card-img-overlay {
+        opacity: 1;
+    }
+
+    .card:hover .card-img-top {
+        transform: scale(1.05);
+    }
+
+    .portfolio-item {
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    .input-group-text {
+        border-right: none;
+    }
+
+    .form-select {
+        border-left: none;
+    }
+
+    .form-select:focus {
+        border-color: #ced4da;
+    }
+
+    .input-group:focus-within {
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Portfolio filtering and sorting
+        function filterAndSortPortfolio() {
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const sortOption = document.getElementById('sortOption').value;
+            const items = Array.from(document.querySelectorAll('.portfolio-item'));
+            
+            // Filter by category
+            items.forEach(item => {
+                if (categoryFilter && item.dataset.category !== categoryFilter) {
+                    item.style.display = 'none';
+                } else {
+                    item.style.display = 'block';
+                }
+            });
+
+            // Sort items
+            const visibleItems = items.filter(item => item.style.display !== 'none');
+            const container = document.getElementById('portfolioGrid');
+            
+            visibleItems.sort((a, b) => {
+                const aTitle = a.querySelector('.h5').textContent;
+                const bTitle = b.querySelector('.h5').textContent;
+                const aDate = new Date(a.querySelector('.fa-calendar-alt').parentElement.textContent.trim());
+                const bDate = new Date(b.querySelector('.fa-calendar-alt').parentElement.textContent.trim());
+                
+                switch (sortOption) {
+                    case 'newest':
+                        return bDate - aDate;
+                    case 'oldest':
+                        return aDate - bDate;
+                    case 'name':
+                        return aTitle.localeCompare(bTitle);
+                    case 'rating':
+                        // Add rating sorting logic if needed
+                        return 0;
+                    default:
+                        return 0;
+                }
+            });
+
+            // Reorder items in the container
+            visibleItems.forEach(item => container.appendChild(item));
+        }
+
+        // Event listeners for filters
+        document.getElementById('categoryFilter').addEventListener('change', filterAndSortPortfolio);
+        document.getElementById('sortOption').addEventListener('change', filterAndSortPortfolio);
+    </script>
+} 

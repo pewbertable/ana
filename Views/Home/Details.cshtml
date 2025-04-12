@@ -1,0 +1,167 @@
+@model AnastasiiaPortfolio.Models.Project
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <img src="@Model.ImageUrl" alt="@Model.Title" class="img-fluid rounded shadow-sm mb-4">
+            <h1 class="mb-4">@Model.Title</h1>
+            <div class="mb-4">
+                <span class="badge bg-primary me-2">@Model.Category</span>
+                <span class="text-muted">Completed: @Model.DateCompleted.ToString("MMMM yyyy")</span>
+            </div>
+            <div class="mb-4">
+                <h5>Description</h5>
+                <p>@Model.Description</p>
+            </div>
+            <div class="mb-4">
+                <h5>Technologies Used</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    @foreach (var tech in Model.Technologies.Split(','))
+                    {
+                        <span class="badge bg-secondary">@tech.Trim()</span>
+                    }
+                </div>
+            </div>
+            <div class="d-flex gap-3">
+                @if (!string.IsNullOrEmpty(Model.ProjectUrl))
+                {
+                    <a href="@Model.ProjectUrl" class="btn btn-primary" target="_blank">
+                        <i class="fas fa-external-link-alt me-2"></i>Live Demo
+                    </a>
+                }
+                @if (!string.IsNullOrEmpty(Model.GitHubUrl))
+                {
+                    <a href="@Model.GitHubUrl" class="btn btn-outline-dark" target="_blank">
+                        <i class="fab fa-github me-2"></i>GitHub
+                    </a>
+                }
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Project Details</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-calendar-alt me-2"></i>
+                            <strong>Date Completed:</strong> @Model.DateCompleted.ToString("MMMM yyyy")
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-tag me-2"></i>
+                            <strong>Category:</strong> @Model.Category
+                        </li>
+                        @if (!string.IsNullOrEmpty(Model.ProjectUrl))
+                        {
+                            <li class="mb-2">
+                                <i class="fas fa-link me-2"></i>
+                                <strong>Live Demo:</strong>
+                                <a href="@Model.ProjectUrl" target="_blank">View Project</a>
+                            </li>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.GitHubUrl))
+                        {
+                            <li class="mb-2">
+                                <i class="fab fa-github me-2"></i>
+                                <strong>GitHub:</strong>
+                                <a href="@Model.GitHubUrl" target="_blank">View Code</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-4">Reviews</h3>
+            @if (Model.Reviews.Any())
+            {
+                foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedAt))
+                {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="card-title">@review.Title</h5>
+                                    <div class="mb-2">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            <i class="fas fa-star @(i <= review.Rating ? "text-warning" : "text-muted")"></i>
+                                        }
+                                    </div>
+                                    <p class="card-text">@review.Comment</p>
+                                    @if (!string.IsNullOrEmpty(review.Pros))
+                                    {
+                                        <div class="mb-2">
+                                            <strong>Pros:</strong>
+                                            <p class="mb-0">@review.Pros</p>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(review.Cons))
+                                    {
+                                        <div class="mb-2">
+                                            <strong>Cons:</strong>
+                                            <p class="mb-0">@review.Cons</p>
+                                        </div>
+                                    }
+                                    <div class="d-flex gap-3">
+                                        <button class="btn btn-sm btn-outline-success vote-btn" data-review-id="@review.Id" data-is-helpful="true">
+                                            <i class="fas fa-thumbs-up"></i> <span class="helpful-count">@review.HelpfulCount</span>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger vote-btn" data-review-id="@review.Id" data-is-helpful="false">
+                                            <i class="fas fa-thumbs-down"></i> <span class="not-helpful-count">@review.NotHelpfulCount</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <small class="text-muted">@review.CreatedAt.ToString("MMMM d, yyyy")</small>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-muted">No reviews yet. Be the first to review this project!</p>
+            }
+
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a asp-controller="Reviews" asp-action="Create" asp-route-projectId="@Model.Id" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Add Review
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login to Review
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.vote-btn').click(function() {
+                var btn = $(this);
+                var reviewId = btn.data('review-id');
+                var isHelpful = btn.data('is-helpful');
+
+                $.post('/Reviews/Vote', { reviewId: reviewId, isHelpful: isHelpful })
+                    .done(function(response) {
+                        btn.closest('.card').find('.helpful-count').text(response.helpfulCount);
+                        btn.closest('.card').find('.not-helpful-count').text(response.notHelpfulCount);
+                    })
+                    .fail(function() {
+                        alert('Failed to record vote. Please try again.');
+                    });
+            });
+        });
+    </script>
+} 

@@ -1,0 +1,281 @@
+@{
+    ViewData["Title"] = "Resume";
+}
+
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-4 fw-bold mb-3">Resume</h1>
+            <p class="lead text-secondary">My professional experience and qualifications</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Left Column -->
+        <div class="col-lg-4">
+            <!-- Profile Card -->
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <img src="~/images/profile.jpg" alt="Anastasiia" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                    <h2 class="h4 mb-3">Anastasiia</h2>
+                    <p class="text-secondary mb-4">Full-Stack Developer</p>
+                    <div class="d-flex justify-content-center gap-3 mb-4">
+                        <a href="#" class="text-muted"><i class="fab fa-github fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-twitter fa-lg"></i></a>
+                    </div>
+                    <a href="~/files/resume.pdf" class="btn btn-primary" target="_blank">
+                        <i class="fas fa-download me-2"></i>Download PDF
+                    </a>
+                </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="h5 mb-3">Skills</h3>
+                    <div class="mb-3">
+                        <h4 class="h6 text-secondary mb-2">Frontend</h4>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-primary">HTML5</span>
+                            <span class="badge bg-primary">CSS3</span>
+                            <span class="badge bg-primary">JavaScript</span>
+                            <span class="badge bg-primary">React</span>
+                            <span class="badge bg-primary">Vue.js</span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <h4 class="h6 text-secondary mb-2">Backend</h4>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-primary">C#</span>
+                            <span class="badge bg-primary">.NET Core</span>
+                            <span class="badge bg-primary">Node.js</span>
+                            <span class="badge bg-primary">Python</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="h6 text-secondary mb-2">Tools & Others</h4>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-primary">Git</span>
+                            <span class="badge bg-primary">Docker</span>
+                            <span class="badge bg-primary">SQL</span>
+                            <span class="badge bg-primary">MongoDB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Education -->
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h4 mb-4 text-center">Education</h2>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <h4 class="h6 mb-1">Bachelor of Computer Science</h4>
+                            <p class="text-secondary small mb-0">University Name • 2018 - 2022</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-8">
+            <!-- About -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="h5 mb-3">About Me</h3>
+                    <p class="text-secondary mb-0">
+                        I am a passionate Full-Stack Developer with a strong foundation in web development
+                        and a keen eye for creating elegant, efficient solutions. With experience in both
+                        frontend and backend technologies, I enjoy building scalable applications that
+                        provide value to users.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Experience -->
+            <div class="card mb-4 work-experience-section">
+                <div class="card-body">
+                    <h3 class="h5 mb-4">Work Experience</h3>
+                    <div class="timeline">
+                        <div class="timeline-item mb-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h4 class="h6 mb-1">Senior Full-Stack Developer</h4>
+                                    <p class="text-secondary small mb-0">Company Name</p>
+                                </div>
+                                <span class="badge bg-primary">2020 - Present</span>
+                            </div>
+                            <p class="text-secondary mb-0">
+                                Led the development of multiple web applications using modern technologies.
+                                Implemented responsive designs and optimized application performance.
+                            </p>
+                        </div>
+                        <div class="timeline-item mb-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h4 class="h6 mb-1">Full-Stack Developer</h4>
+                                    <p class="text-secondary small mb-0">Previous Company</p>
+                                </div>
+                                <span class="badge bg-primary">2018 - 2020</span>
+                            </div>
+                            <p class="text-secondary mb-0">
+                                Developed and maintained web applications using ASP.NET Core and React.
+                                Collaborated with cross-functional teams to deliver high-quality solutions.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certifications -->
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="h5 mb-4">Certifications</h3>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-certificate text-primary me-3 fa-2x"></i>
+                                <div>
+                                    <h4 class="h6 mb-1">Microsoft Certified Developer</h4>
+                                    <p class="text-secondary small mb-0">2022</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-certificate text-primary me-3 fa-2x"></i>
+                                <div>
+                                    <h4 class="h6 mb-1">AWS Certified Developer</h4>
+                                    <p class="text-secondary small mb-0">2021</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="bg-light py-4 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 text-center text-md-start">
+                <p class="mb-0 text-secondary">&copy; @DateTime.Now.Year Anastasiia. All rights reserved.</p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <div class="d-flex justify-content-center justify-content-md-end gap-3">
+                    <a href="#" class="text-muted"><i class="fab fa-github fa-lg"></i></a>
+                    <a href="#" class="text-muted"><i class="fab fa-linkedin fa-lg"></i></a>
+                    <a href="#" class="text-muted"><i class="fab fa-twitter fa-lg"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+    .card {
+        border: none;
+        box-shadow: var(--shadow);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-left: 1.5rem;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background-color: var(--primary-color);
+    }
+
+    .timeline-item::after {
+        content: '';
+        position: absolute;
+        left: -4px;
+        top: 0;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+    }
+
+    .badge {
+        font-weight: 500;
+    }
+
+    .social-links a {
+        transition: color 0.2s ease;
+    }
+
+    .social-links a:hover {
+        color: var(--primary-color) !important;
+    }
+
+    .education-section {
+        text-align: center;
+        margin: 20px auto;
+        padding: 20px;
+        max-width: 800px;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .education-section h2 {
+        font-size: 2em;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .education-section p {
+        font-size: 1.1em;
+        line-height: 1.6;
+        color: #555;
+    }
+
+    .work-experience-section {
+        text-align: center;
+        margin: 20px auto;
+        padding: 20px;
+        max-width: 800px;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .lead.text-secondary {
+        color: #B3B3B3;
+    }
+
+    .text-secondary {
+        color: #B3B3B3;
+    }
+
+    .bg-primary {
+        background-color: #2B2B2B;
+        color: #FFFFFF;
+    }
+
+    .text-primary {
+        color: #2B2B2B;
+    }
+
+    .bg-light {
+        background-color: #D4D4D4;
+    }
+</style> 
