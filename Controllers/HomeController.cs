@@ -133,8 +133,8 @@ public class HomeController : Controller
         {
             try
             {
-                _logger.LogInformation("Contact form submitted. Sending email to anastasiiakhrustaleva@gmail.com");
-                string recipient = "anastasiiakhrustaleva@gmail.com";
+                _logger.LogInformation("Contact form submitted. Sending email to anastasiiakhru@gmail.com");
+                string recipient = "anastasiiakhru@gmail.com";
                 string subject = $"Portfolio Contact Form Submission from {model.ContactForm.Name}";
                 await _emailService.SendContactFormEmailAsync(recipient, subject, model.ContactForm.Name, model.ContactForm.Email, model.ContactForm.Message);
                 

@@ -589,6 +589,134 @@
             color: #0f5132;
             border-radius: 8px;
         }
+
+        .modal-content {
+            border-radius: 15px;
+        }
+
+        .modal-header {
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            padding: 1.5rem;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+            padding: 0.75rem 2rem;
+            font-weight: 500;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .modal .fa-paper-plane {
+            color: #28a745;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        @@keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .modal-backdrop.show {
+            opacity: 0.7;
+        }
+
+        .modal.fade .modal-dialog {
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal.show .modal-dialog {
+            transform: none;
+        }
+
+        .success-modal .modal-content {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        .success-modal .modal-header {
+            background: #10B981;
+            color: white;
+            border-radius: 20px 20px 0 0;
+            padding: 1.5rem;
+            border: none;
+        }
+
+        .success-modal .modal-body {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .success-modal .modal-footer {
+            border: none;
+            padding: 1.5rem;
+            justify-content: center;
+        }
+
+        .success-modal .btn-success {
+            background: #10B981;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .success-modal .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .success-icon {
+            font-size: 3rem;
+            color: #10B981;
+            margin-bottom: 1.5rem;
+            animation: iconFloat 2s infinite ease-in-out;
+        }
+
+        .success-message {
+            font-size: 1.2rem;
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+
+        .success-note {
+            color: #6B7280;
+            font-size: 1rem;
+        }
+
+        /* Define animations using proper CSS syntax */
+        @@keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@keyframes iconFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
     </style>
 }
 
@@ -888,58 +1016,71 @@
     </div>
 </section>
 
-<section id="contact" class="py-5 bg-light">
+<section id="contact" class="section-padding">
     <div class="container">
-        <h2 class="text-center mb-5">Contact Me</h2>
+        <h2 class="section-title text-center mb-5">Contact Me</h2>
         <div class="row">
-            <div class="col-md-6 mb-4 mb-md-0">
-                <h4>Get in Touch</h4>
-                <p>I'm always open to discussing new projects, creative ideas, or opportunities to be part of your visions. Feel free to reach out!</p>
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <a href="mailto:anastasiiakhrustaleva@gmail.com">anastasiiakhrustaleva@gmail.com</a>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-phone"></i>
-                        <span>+1 905 3241507</span>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fab fa-linkedin"></i>
-                        <a href="https://www.linkedin.com/in/anastasiia-khrustaleva-29a180100/" target="_blank">LinkedIn Profile</a>
+            <!-- Contact Information -->
+            <div class="col-lg-4 mb-4 mb-lg-0">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h3 class="h5 mb-4">Contact Information</h3>
+                        <partial name="_ContactInfoPartial" />
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <h4>Send a Message</h4>
-                <form asp-controller="Home" asp-action="Contact" method="post">
-                    <div class="mb-3">
-                        <label asp-for="ContactForm.Name" class="form-label">Name</label>
-                        <input asp-for="ContactForm.Name" class="form-control" required>
-                        <span asp-validation-for="ContactForm.Name" class="text-danger"></span>
+
+            <!-- Contact Form -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="h5 mb-4">Send a Message</h3>
+                        <form id="contactForm" class="needs-validation" novalidate>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="Your Name" required>
+                                        <label for="name">Your Name</label>
+                                        <div class="invalid-feedback">Please enter your name.</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="email" class="form-control" id="email" name="email" placeholder="Your Email" required>
+                                        <label for="email">Your Email</label>
+                                        <div class="invalid-feedback">Please enter a valid email address.</div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="subject" name="subject" placeholder="Subject" required>
+                                        <label for="subject">Subject</label>
+                                        <div class="invalid-feedback">Please enter a subject.</div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" id="message" name="message" placeholder="Your Message" style="height: 150px" required></textarea>
+                                        <label for="message">Your Message</label>
+                                        <div class="invalid-feedback">Please enter your message.</div>
+                                        <div class="form-text text-end">
+                                            <span id="messageCount">0</span>/500 characters
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane me-2"></i>Send Message
+                                        <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <div id="successMessage" class="alert alert-success mt-3 d-none">
+                            Thank you for your message! I'll get back to you soon.
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label asp-for="ContactForm.Email" class="form-label">Email</label>
-                        <input asp-for="ContactForm.Email" type="email" class="form-control" required>
-                        <span asp-validation-for="ContactForm.Email" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="ContactForm.Subject" class="form-label">Subject</label>
-                        <input asp-for="ContactForm.Subject" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="ContactForm.Message" class="form-label">Message</label>
-                        <textarea asp-for="ContactForm.Message" class="form-control" rows="4" required></textarea>
-                        <span asp-validation-for="ContactForm.Message" class="text-danger"></span>
-                    </div>
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Send Message</button>
-                    </div>
-                    @if (TempData["MessageSent"] != null)
-                    {
-                        <div class="alert alert-success mt-3">@TempData["MessageSent"]</div>
-                    }
-                </form>
+                </div>
             </div>
         </div>
     </div>
@@ -967,16 +1108,27 @@
 <!-- Success Modal -->
 <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="successModalLabel">Message Sent!</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header border-0 bg-success text-white">
+        <h5 class="modal-title" id="successModalLabel">
+          <i class="fas fa-check-circle me-2"></i>Message Sent Successfully
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-        THANK YOU, MESSAGE SENT. ANASTASIIA WILL GET BACK TO YOU SHORTLY.
+      <div class="modal-body p-4">
+        <div class="text-center mb-4">
+          <div class="mb-3">
+            <i class="fas fa-paper-plane fa-3x text-success"></i>
+          </div>
+          <h4 class="mb-3">Thank You!</h4>
+          <p class="lead mb-0">Your message has been sent successfully.</p>
+          <p class="text-muted">Anastasiia will get back to you shortly.</p>
+        </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+      <div class="modal-footer border-0 justify-content-center">
+        <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal">
+          <i class="fas fa-check me-2"></i>Got it
+        </button>
       </div>
     </div>
   </div>
@@ -985,13 +1137,16 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Check if the success modal should be shown (based on TempData set in Controller)
-            @if (TempData["ShowSuccessModal"] as bool? == true)
-            {
-                <text>
+            // Check if there's a success message in TempData
+            var messageSent = '@TempData["MessageSent"]';
+            if (messageSent) {
+                // Show the modal with animation
                 var successModal = new bootstrap.Modal(document.getElementById('successModal'));
                 successModal.show();
-                </text>
+                
+                // Add animation class to modal content
+                var modalContent = document.querySelector('#successModal .modal-content');
+                modalContent.classList.add('animate__animated', 'animate__fadeInUp');
             }
 
             // Navbar scroll behavior

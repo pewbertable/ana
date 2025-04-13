@@ -11,16 +11,17 @@ namespace AnastasiiaPortfolio.Data
             using (var context = new ApplicationDbContext(
                 serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
             {
-                // Create admin role if it doesn't exist
+                var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
                 var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+                // Create Admin role if it doesn't exist
                 if (!await roleManager.RoleExistsAsync("Admin"))
                 {
                     await roleManager.CreateAsync(new IdentityRole("Admin"));
                 }
 
                 // Create admin user if it doesn't exist
-                var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                var adminEmail = "admin@example.com";
+                var adminEmail = "anastasiiakhru@gmail.com";
                 var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
                 if (adminUser == null)
@@ -29,12 +30,10 @@ namespace AnastasiiaPortfolio.Data
                     {
                         UserName = adminEmail,
                         Email = adminEmail,
-                        EmailConfirmed = true,
-                        FirstName = "Admin",
-                        LastName = "User"
+                        EmailConfirmed = true
                     };
 
-                    var result = await userManager.CreateAsync(adminUser, "Admin123!");
+                    var result = await userManager.CreateAsync(adminUser, "Password1!");
                     if (result.Succeeded)
                     {
                         await userManager.AddToRoleAsync(adminUser, "Admin");

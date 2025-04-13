@@ -1,0 +1,654 @@
+@page
+@model AnastasiiaPortfolio.Pages.PlayZoneModel
+@{
+    ViewData["Title"] = "PlayZone";
+}
+
+<div class="playzone-container">
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>Welcome to PlayZone</h1>
+            <p>Get ready to play!</p>
+        </div>
+    </section>
+
+    <div class="game-container">
+        <div id="gameCanvas"></div>
+        <div class="score-display">Score: <span id="score">0</span></div>
+        
+        <!-- Add mobile touch controls -->
+        <div class="mobile-controls">
+            <div class="controls-row">
+                <button class="control-btn up-btn">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="currentColor" d="M12 4L2 14h6v7h8v-7h6L12 4z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="controls-row">
+                <button class="control-btn left-btn">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="currentColor" d="M4 12l10-10v6h7v8h-7v6L4 12z"/>
+                    </svg>
+                </button>
+                <button class="control-btn down-btn">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="currentColor" d="M12 20l10-10h-6V3H8v7H2l10 10z"/>
+                    </svg>
+                </button>
+                <button class="control-btn right-btn">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="currentColor" d="M20 12L10 2v6H3v8h7v6l10-10z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="game-over-box" style="display: none;">
+            <h2>Game Over!</h2>
+            <p class="final-score">Final Score: <span id="finalScore">0</span></p>
+            <button class="play-again-btn">Play Again</button>
+            <button class="new-player-btn">New Player</button>
+        </div>
+    </div>
+
+    <!-- Update the name input dialog -->
+    <div class="name-dialog" id="nameDialog">
+        <div class="name-dialog-content">
+            <div class="dialog-header">
+                <img src="~/images/snake-icon.svg" alt="Snake Game" class="game-icon" onerror="this.style.display='none'" />
+                <h2>Welcome to Snake Game!</h2>
+            </div>
+            <div class="dialog-body">
+                <p>Enter your name to start the adventure</p>
+                <div class="name-input-container">
+                    <input type="text" id="playerName" placeholder="Your name" maxlength="20" autocomplete="off" />
+                    <div class="input-focus-border"></div>
+                </div>
+                <button class="start-game-btn" id="startGameBtn">
+                    <span class="btn-text">Start Game</span>
+                    <span class="btn-icon">→</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="leaderboard-section">
+        <h2>Leaderboard</h2>
+        <div class="leaderboard-cards">
+            <!-- Leaderboard entries will be dynamically added here -->
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        /* Main container */
+        .playzone-container {
+            min-height: 100vh;
+            background-color: #1e1d2b;  /* Dark Graphite */
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Header/Welcome section */
+        .hero-section {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);  /* Deep Blue Gradient */
+            color: #f4f4f5;  /* Light Grey White */
+            padding: 50px 0;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        /* Game container */
+        .game-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #2a2a3b;  /* Slate Grey */
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #gameCanvas {
+            width: 100%;
+            height: 400px;
+            border: 2px solid #4a5d8f;  /* Deep Blue */
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Score display */
+        .score-display {
+            color: #f4f4f5;  /* White */
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        /* Game over box */
+        .game-over-box {
+            background-color: #0f172a;  /* Dark Blue-Gray */
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            color: #f87171;  /* Soft Red */
+        }
+
+        /* Buttons */
+        .play-again-btn, .new-player-btn {
+            background-color: #1e1d2b;  /* Dark Charcoal */
+            color: #f4f4f5;  /* White/Light Grey */
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            margin: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .play-again-btn:hover, .new-player-btn:hover {
+            background-color: #22d3ee;  /* Hover Glow */
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(34, 211, 238, 0.3);
+        }
+
+        /* Leaderboard section */
+        .leaderboard-section {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 20px;
+        }
+
+        .leaderboard-section h2 {
+            color: #f4f4f5;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .leaderboard-cards {
+            background-color: #2a2a3b;  /* Slate Grey */
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .leaderboard-entry {
+            background-color: #1e1d2b;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            color: #f4f4f5;
+            border: 1px solid #4a5d8f;
+        }
+
+        .leaderboard-entry.top-score {
+            border: 1px solid #face15;  /* Gold accent */
+        }
+
+        /* Snake game specific styles */
+        .snake-body {
+            background-color: #4ade8f;  /* Vibrant Green */
+        }
+
+        .snake-head {
+            background-color: #22c55e;  /* Brighter Neon Green */
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);  /* Glow effect */
+        }
+
+        .food-dot {
+            background-color: #f43f5e;  /* Bright Rose Red */
+        }
+
+        /* Mobile Controls Styles */
+        .mobile-controls {
+            display: none;  /* Hidden by default on desktop */
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            touch-action: none;  /* Prevent default touch actions */
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(145deg, #2a2a3b, #1e1d2b);
+            color: #f4f4f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            -webkit-tap-highlight-color: transparent;  /* Remove tap highlight on iOS */
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(145deg, #1e1d2b, #2a2a3b);
+        }
+
+        .control-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        /* Enhanced Mobile Responsiveness */
+        @@media (max-width: 768px) {
+            .game-container {
+                margin: 10px;
+                padding: 15px;
+            }
+
+            #gameCanvas {
+                height: 300px;
+                touch-action: none;  /* Prevent scrolling while touching the game canvas */
+            }
+
+            .mobile-controls {
+                display: flex;  /* Show controls on mobile */
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .name-dialog-content {
+                padding: 1.5rem;
+                margin: 15px;
+            }
+
+            .score-display {
+                font-size: 1.2rem;
+            }
+
+            /* Adjust game over box for mobile */
+            .game-over-box {
+                padding: 1.5rem;
+            }
+
+            .play-again-btn, .new-player-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+                margin: 5px;
+            }
+
+            /* Prevent text selection during game play */
+            * {
+                user-select: none;
+                -webkit-user-select: none;
+            }
+        }
+
+        /* iPhone-specific adjustments */
+        @@media screen and (max-width: 428px) {  /* iPhone 13 Pro Max width */
+            .game-container {
+                padding: 10px;
+            }
+
+            #gameCanvas {
+                height: 280px;  /* Slightly smaller for better control access */
+            }
+
+            .control-btn {
+                width: 50px;  /* Slightly smaller buttons for iPhone */
+                height: 50px;
+            }
+
+            /* Ensure proper spacing from bottom of screen */
+            .mobile-controls {
+                margin-bottom: 20px;
+            }
+
+            /* Safe area padding for iPhone X and newer */
+            .playzone-container {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+
+        /* Updated Name Dialog Styles */
+        .name-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .name-dialog-content {
+            background: linear-gradient(145deg, #2a2a3b, #1e1d2b);
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                        0 0 0 1px rgba(255, 255, 255, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            transform: translateY(0);
+            animation: dialogFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .dialog-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .game-icon {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+        }
+
+        .name-dialog-content h2 {
+            color: #f4f4f5;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #22d3ee, #0ea5e9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .dialog-body {
+            padding: 0 1rem;
+        }
+
+        .name-dialog-content p {
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .name-input-container {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        #playerName {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 2px solid rgba(74, 93, 143, 0.3);
+            border-radius: 12px;
+            color: #f4f4f5;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+        }
+
+        #playerName:focus {
+            border-color: #22d3ee;
+            box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.2);
+            background-color: rgba(15, 23, 42, 0.8);
+        }
+
+        #playerName::placeholder {
+            color: #64748b;
+        }
+
+        .start-game-btn {
+            background: linear-gradient(135deg, #22d3ee, #0ea5e9);
+            color: #f4f4f5;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-game-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(34, 211, 238, 0.25);
+        }
+
+        .start-game-btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-text {
+            z-index: 1;
+        }
+
+        .btn-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .start-game-btn:hover .btn-icon {
+            transform: translateX(5px);
+        }
+
+        /* Enhanced animation */
+        @@keyframes dialogFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Mobile adjustments for the dialog */
+        @@media (max-width: 768px) {
+            .name-dialog-content {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            .name-dialog-content h2 {
+                font-size: 1.75rem;
+            }
+
+            .dialog-body {
+                padding: 0;
+            }
+
+            #playerName {
+                padding: 0.875rem 1.25rem;
+                font-size: 1rem;
+            }
+
+            .start-game-btn {
+                padding: 0.875rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const nameDialog = document.getElementById('nameDialog');
+            const playerNameInput = document.getElementById('playerName');
+            const startGameBtn = document.getElementById('startGameBtn');
+
+            // Ensure dialog is visible and input is focused
+            nameDialog.style.display = 'flex';
+            setTimeout(() => {
+                playerNameInput.focus();
+            }, 400);
+
+            // Add input animation
+            playerNameInput.addEventListener('focus', function() {
+                this.parentElement.classList.add('input-focused');
+            });
+
+            playerNameInput.addEventListener('blur', function() {
+                if (!this.value) {
+                    this.parentElement.classList.remove('input-focused');
+                }
+            });
+
+            // Handle start game button click
+            startGameBtn.addEventListener('click', function() {
+                const playerName = playerNameInput.value.trim();
+                if (playerName === '') {
+                    nameDialog.classList.add('shake');
+                    playerNameInput.style.borderColor = '#ef4444';
+                    setTimeout(() => {
+                        nameDialog.classList.remove('shake');
+                    }, 500);
+                    return;
+                }
+                
+                // Store player name and start game
+                localStorage.setItem('playerName', playerName);
+                nameDialog.style.display = 'none';
+                // Initialize game here
+                initGame();
+            });
+
+            // Remove red border when user starts typing again
+            playerNameInput.addEventListener('input', function() {
+                this.style.borderColor = '';
+            });
+
+            // Handle Enter key
+            playerNameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    startGameBtn.click();
+                }
+            });
+
+            // Mobile touch controls
+            const upBtn = document.querySelector('.up-btn');
+            const downBtn = document.querySelector('.down-btn');
+            const leftBtn = document.querySelector('.left-btn');
+            const rightBtn = document.querySelector('.right-btn');
+            
+            // Direction state
+            let currentDirection = 'right';
+            let canChangeDirection = true;
+
+            // Touch control handlers
+            function handleDirectionChange(newDirection) {
+                if (!canChangeDirection) return;
+                
+                // Prevent 180-degree turns
+                const opposites = {
+                    'up': 'down',
+                    'down': 'up',
+                    'left': 'right',
+                    'right': 'left'
+                };
+                
+                if (opposites[newDirection] !== currentDirection) {
+                    currentDirection = newDirection;
+                    canChangeDirection = false;
+                    setTimeout(() => { canChangeDirection = true; }, 100); // Prevent rapid direction changes
+                }
+            }
+
+            // Add touch event listeners
+            upBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                handleDirectionChange('up');
+            });
+
+            downBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                handleDirectionChange('down');
+            });
+
+            leftBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                handleDirectionChange('left');
+            });
+
+            rightBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                handleDirectionChange('right');
+            });
+
+            // Swipe controls for the game canvas
+            const gameCanvas = document.getElementById('gameCanvas');
+            let touchStartX = 0;
+            let touchStartY = 0;
+
+            gameCanvas.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            });
+
+            gameCanvas.addEventListener('touchmove', (e) => {
+                e.preventDefault(); // Prevent scrolling while playing
+            });
+
+            gameCanvas.addEventListener('touchend', (e) => {
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndY = e.changedTouches[0].clientY;
+                
+                const deltaX = touchEndX - touchStartX;
+                const deltaY = touchEndY - touchStartY;
+                
+                // Determine swipe direction based on which delta is larger
+                if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                    if (deltaX > 50) handleDirectionChange('right');
+                    else if (deltaX < -50) handleDirectionChange('left');
+                } else {
+                    if (deltaY > 50) handleDirectionChange('down');
+                    else if (deltaY < -50) handleDirectionChange('up');
+                }
+            });
+
+            // Prevent default touch behaviors
+            document.addEventListener('touchmove', (e) => {
+                if (e.target.closest('.game-container')) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            // Handle device orientation changes
+            window.addEventListener('orientationchange', () => {
+                setTimeout(() => {
+                    // Adjust canvas size after orientation change
+                    const canvas = document.getElementById('gameCanvas');
+                    // Recalculate dimensions and redraw game
+                    // This will be implemented in the game logic
+                }, 100);
+            });
+        });
+
+        function initGame() {
+            // Game initialization code will be implemented here
+            // The game logic will use the currentDirection variable
+            // to control snake movement
+        }
+    </script>
+} 

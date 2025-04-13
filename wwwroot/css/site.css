@@ -78,16 +78,14 @@ body {
     color: var(--pepper);
     margin: 0;
     padding: 0;
-    padding-top: 80px;
+    padding-top: 60px;
     overflow-x: hidden;
-
-    /* Background Image Styles */
     background-image: url('/images/backgoud.jpg');
-    background-size: cover; /* Scale the image to cover the entire element */
-    background-position: center center; /* Center the image */
-    background-repeat: no-repeat; /* Do not repeat the image */
-    background-attachment: fixed; /* Fix the background relative to the viewport */
-    min-height: 100vh; /* Ensure body takes at least full viewport height */
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
 }
 
 /* Typography */
@@ -220,31 +218,41 @@ a:hover {
 
 /* Navigation */
 .navbar {
-    padding: var(--spacing-2) 0;
-    background-color: var(--pepper);
+    background-color: var(--lsalt);
+    box-shadow: var(--shadow);
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: var(--z-index-fixed);
-    transition: all var(--transition-medium) ease;
+    padding: 0.5rem 1rem;
+    transition: all var(--transition-fast) ease;
 }
 
-.navbar-scrolled {
-    padding: var(--spacing-3) 0;
-    box-shadow: var(--shadow-md);
+.navbar-toggler {
+    border: none;
+    padding: 0.25rem 0.5rem;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(43, 43, 43, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
 .navbar-brand {
     font-size: var(--font-size-xl);
     font-weight: var(--font-weight-semibold);
-    color: var(--lsalt);
+    color: var(--pepper);
 }
 
 .nav-link {
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-medium);
-    color: var(--lsalt) !important;
+    color: var(--pepper) !important;
     padding: var(--spacing-1) var(--spacing-4);
     transition: color var(--transition-fast) ease;
 }
@@ -255,7 +263,7 @@ a:hover {
 }
 
 .nav-link.active {
-    color: var(--lsalt);
+    color: var(--pepper);
     font-weight: var(--font-weight-bold);
     text-decoration: none;
 }
@@ -294,7 +302,7 @@ a:hover {
 
 /* Social Links */
 .social-links a {
-    color: var(--lsalt);
+    color: var(--pepper);
     transition: color var(--transition-fast) ease;
     margin-left: var(--spacing-3);
     font-size: var(--font-size-lg);
@@ -418,69 +426,73 @@ a:hover {
 /* Mobile Navigation */
 @media (max-width: 991.98px) {
     .navbar-collapse {
-        background-color: var(--pepper);
-        padding: var(--spacing-4);
-        border-radius: var(--radius-md);
-        margin-top: var(--spacing-4);
+        background-color: var(--lsalt);
+        padding: 1rem;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        margin: 0.5rem;
     }
 
     .navbar-nav {
-        margin-bottom: var(--spacing-4);
+        padding: 0.5rem 0;
     }
 
     .nav-link {
-        padding: var(--spacing-3) var(--spacing-4);
+        padding: 0.5rem 1rem;
         border-radius: var(--radius-md);
     }
 
     .nav-link:hover {
-        background-color: var(--mid-grey);
+        background-color: var(--light-grey);
+    }
+
+    .container {
+        padding-left: var(--spacing-4);
+        padding-right: var(--spacing-4);
+    }
+
+    body {
+        padding-top: 56px;
     }
 }
 
-/* Small devices (phones, 576px and down) */
-@media (max-width: 575.98px) {
+@media (max-width: 767.98px) {
     :root {
         --font-size-base: 14px;
-        --font-size-sm: 0.75rem;
         --font-size-lg: 1rem;
         --font-size-xl: 1.125rem;
         --font-size-2xl: 1.25rem;
         --font-size-3xl: 1.5rem;
-        --font-size-4xl: 1.75rem;
+        --font-size-4xl: 1.875rem;
     }
 
-    body {
-        padding-top: 60px;
-    }
-
-    .container {
-        padding-left: var(--spacing-3);
-        padding-right: var(--spacing-3);
+    .card {
+        margin-bottom: var(--spacing-4);
     }
 
     .card-body {
         padding: var(--spacing-4);
     }
 
-    .btn {
-        padding: var(--spacing-2) var(--spacing-4);
-        font-size: var(--font-size-sm);
-    }
-
     .section-title {
         font-size: var(--font-size-2xl);
+        margin-bottom: var(--spacing-6);
     }
 
-    .project-card {
-        margin-bottom: var(--spacing-4);
+    .btn {
+        width: 100%;
+        margin-bottom: var(--spacing-3);
     }
 }
 
-/* Medium devices (tablets, 768px and down) */
-@media (max-width: 767.98px) {
-    .navbar {
-        padding: var(--spacing-2) var(--spacing-3);
+@media (max-width: 575.98px) {
+    .container {
+        padding-left: var(--spacing-3);
+        padding-right: var(--spacing-3);
     }
 
     .navbar-brand {
@@ -488,11 +500,19 @@ a:hover {
     }
 
     .card {
-        margin-bottom: var(--spacing-4);
+        border-radius: var(--radius-md);
     }
 
     .form-control {
-        font-size: var(--font-size-sm);
+        font-size: var(--font-size-base);
+        padding: var(--spacing-2) var(--spacing-3);
+    }
+}
+
+/* Fix for iOS background-attachment: fixed issue */
+@supports (-webkit-overflow-scrolling: touch) {
+    body {
+        background-attachment: scroll;
     }
 }
 
@@ -549,4 +569,13 @@ a:hover {
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
     }
+}
+
+/* Review Page Specific */
+.review-section {
+    padding-top: 1rem;
+}
+
+.review-section h1 {
+    margin-top: 0;
 }

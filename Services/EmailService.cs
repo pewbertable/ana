@@ -18,9 +18,9 @@ namespace AnastasiiaPortfolio.Services
             _configuration = configuration;
             _smtpServer = _configuration["EmailSettings:SmtpServer"] ?? "smtp.gmail.com";
             _smtpPort = int.Parse(_configuration["EmailSettings:SmtpPort"] ?? "587");
-            _smtpUsername = _configuration["EmailSettings:SmtpUsername"] ?? "anastasiiakhrustaleva@gmail.com";
+            _smtpUsername = _configuration["EmailSettings:SmtpUsername"] ?? "anastasiiakhru@gmail.com";
             _smtpPassword = _configuration["EmailSettings:SmtpPassword"] ?? "";
-            _fromEmail = _configuration["EmailSettings:FromEmail"] ?? "anastasiiakhrustaleva@gmail.com";
+            _fromEmail = _configuration["EmailSettings:FromEmail"] ?? "anastasiiakhru@gmail.com";
         }
 
         public async Task SendContactFormEmailAsync(string recipient, string subject, string name, string email, string message)

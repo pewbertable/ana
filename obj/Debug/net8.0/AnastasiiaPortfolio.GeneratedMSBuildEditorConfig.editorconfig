@@ -20,6 +20,14 @@ build_property._RazorSourceGeneratorDebug =
 build_property.EffectiveAnalysisLevelStyle = 8.0
 build_property.EnableCodeStyleSeverity = 
 
+[C:/Users/anast/OneDrive - NC/Anastasiia/AnastasiiaPortfolio/Pages/PlayZone.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGxheVpvbmUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/anast/OneDrive - NC/Anastasiia/AnastasiiaPortfolio/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/anast/OneDrive - NC/Anastasiia/AnastasiiaPortfolio/Views/Home/Contact.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxDb250YWN0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -46,6 +54,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/anast/OneDrive - NC/Anastasiia/AnastasiiaPortfolio/Views/Home/Resume.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxSZXN1bWUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/anast/OneDrive - NC/Anastasiia/AnastasiiaPortfolio/Views/Home/SnakeGame.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxTbmFrZUdhbWUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/anast/OneDrive - NC/Anastasiia/AnastasiiaPortfolio/Views/PlayZone/Index.cshtml]
@@ -94,6 +106,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/anast/OneDrive - NC/Anastasiia/AnastasiiaPortfolio/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/anast/OneDrive - NC/Anastasiia/AnastasiiaPortfolio/Views/Shared/_ContactInfoPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Db250YWN0SW5mb1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/anast/OneDrive - NC/Anastasiia/AnastasiiaPortfolio/Views/Shared/_LoginPartial.cshtml]

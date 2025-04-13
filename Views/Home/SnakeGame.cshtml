@@ -1,0 +1,38 @@
+@{
+    ViewData["Title"] = "Snake Game";
+}
+
+<div class="game-container">
+    <div class="game-info">
+        <div class="score">Score: <span id="score">0</span></div>
+        <div class="controls">
+            Use arrow keys to control the snake
+        </div>
+    </div>
+    
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    
+    <div class="leaderboard">
+        <h2 class="leaderboard-title">Top Scores</h2>
+        <div class="leaderboard-item top-score">
+            <span class="player-name">Champion</span>
+            <span class="player-score">1000</span>
+        </div>
+        <div class="leaderboard-item">
+            <span class="player-name">Player 2</span>
+            <span class="player-score">850</span>
+        </div>
+        <div class="leaderboard-item">
+            <span class="player-name">Player 3</span>
+            <span class="player-score">720</span>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/snake-game.css" />
+    <script src="~/js/snake-game.js"></script>
+} 
