@@ -35,6 +35,12 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 // Add Email Service
 builder.Services.AddScoped<IEmailService, EmailService>();
 
+// Configure logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+builder.Logging.SetMinimumLevel(LogLevel.Information);
+
 var app = builder.Build();
 
 // Seed the database (requires async Main)

@@ -253,7 +253,7 @@ namespace AnastasiiaPortfolio.Controllers
 
             _context.Reviews.Remove(review);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Admin");
+            return RedirectToAction("Index", "Rate");
         }
 
         // GET: Review/Admin

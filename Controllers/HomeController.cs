@@ -133,21 +133,29 @@ public class HomeController : Controller
         {
             try
             {
-                _logger.LogInformation("Contact form submitted. Sending email to anastasiiakhru@gmail.com");
-                string recipient = "anastasiiakhru@gmail.com";
-                string subject = $"Portfolio Contact Form Submission from {model.ContactForm.Name}";
-                await _emailService.SendContactFormEmailAsync(recipient, subject, model.ContactForm.Name, model.ContactForm.Email, model.ContactForm.Message);
-                
+                _logger.LogInformation("Contact form submitted by {Name} ({Email})", 
+                    model.ContactForm.Name, model.ContactForm.Email);
+
+                await _emailService.SendContactFormEmailAsync(
+                    "anastasiiakhru@gmail.com",  // recipient
+                    $"Portfolio Contact Form: {model.ContactForm.Name}",  // subject
+                    model.ContactForm.Name,
+                    model.ContactForm.Email,
+                    model.ContactForm.Message
+                );
+
                 TempData["MessageSent"] = "Thank you for your message! I'll get back to you soon.";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to send contact form email.");
-                ModelState.AddModelError(string.Empty, "Sorry, there was an error sending your message. Please try again later.");
+                _logger.LogError(ex, "Failed to send contact form email from {Name} ({Email})", 
+                    model.ContactForm.Name, model.ContactForm.Email);
+                ModelState.AddModelError("", "Sorry, there was an error sending your message. Please try again later.");
             }
         }
-        
+
+        // If we get here, something failed, redisplay form with errors
         return View("Index", model);
     }
 

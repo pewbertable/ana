@@ -24,39 +24,51 @@
         </div>
 
         <!-- Contact Form -->
-        <div class="col-lg-8">
+        <div class="col-lg-8 mx-auto">
             <div class="card" style="background: #2a2a3b; border: 1px solid rgba(244, 244, 245, 0.1);">
-                <div class="card-body">
+                <div class="card-body p-4">
                     <h3 class="h5 mb-4" style="color: #f4f4f5;">Send a Message</h3>
+                    
+                    @if (!string.IsNullOrEmpty(TempData["Error"] as string))
+                    {
+                        <div class="alert alert-danger">@TempData["Error"]</div>
+                    }
+                    
                     <form asp-action="Contact" method="post">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control custom-input" id="name" name="name" placeholder="Your Name" required>
-                                    <label for="name" style="color: #f4f4f5;">Your Name</label>
+                                <div class="form-group">
+                                    <label for="name" class="form-label text-light">Your Name</label>
+                                    <input type="text" class="form-control contact-input" id="name" name="ContactForm.Name" required 
+                                           style="background: #1e1e2e; color: white; border: 2px solid rgba(244, 244, 245, 0.4);">
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="email" class="form-control custom-input" id="email" name="email" placeholder="Your Email" required>
-                                    <label for="email" style="color: #f4f4f5;">Your Email</label>
+                                <div class="form-group">
+                                    <label for="email" class="form-label text-light">Your Email</label>
+                                    <input type="email" class="form-control contact-input" id="email" name="ContactForm.Email" required
+                                           style="background: #1e1e2e; color: white; border: 2px solid rgba(244, 244, 245, 0.4);">
                                 </div>
                             </div>
                             <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control custom-input" id="subject" name="subject" placeholder="Subject" required>
-                                    <label for="subject" style="color: #f4f4f5;">Subject</label>
+                                <div class="form-group">
+                                    <label for="message" class="form-label text-light">Your Message</label>
+                                    <textarea class="form-control contact-input" 
+                                              id="message" 
+                                              name="ContactForm.Message" 
+                                              rows="5" 
+                                              required
+                                              style="background: #1e1e2e !important; 
+                                                     color: white !important; 
+                                                     border: 2px solid rgba(244, 244, 245, 0.4) !important;
+                                                     min-height: 150px !important;"></textarea>
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="ContactForm.Message" data-valmsg-replace="true"></span>
                                 </div>
                             </div>
                             <div class="col-12">
-                                <div class="form-floating">
-                                    <textarea class="form-control custom-input" id="message" name="message" placeholder="Your Message" style="height: 150px" required></textarea>
-                                    <label for="message" style="color: #f4f4f5;">Your Message</label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn" style="background: #1a1a1a; color: #f4f4f5; border: 1px solid #22d3ee;">
-                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                                <button type="submit" class="btn btn-primary w-100" 
+                                        style="background: #22d3ee; border: none; padding: 12px;">
+                                    Send Message
                                 </button>
                             </div>
                         </div>
@@ -100,18 +112,39 @@
     }
 
     .custom-input {
-        background: #1e1e2e !important;
-        border: 1px solid rgba(244, 244, 245, 0.1) !important;
-        color: #f4f4f5 !important;
+        background: #2a2a3b !important;
+        border: 2px solid rgba(244, 244, 245, 0.4) !important;
+        color: #ffffff !important;
+        font-size: 1rem !important;
     }
 
     .custom-input:focus {
-        box-shadow: 0 0 0 0.2rem rgba(34, 211, 238, 0.2) !important;
+        background: #2a2a3b !important;
+        box-shadow: 0 0 0 0.25rem rgba(34, 211, 238, 0.25) !important;
         border-color: #22d3ee !important;
+        color: #ffffff !important;
     }
 
-    .custom-input::placeholder {
-        color: rgba(244, 244, 245, 0.5) !important;
+    .form-floating > .form-control {
+        background-color: #2a2a3b !important;
+        color: #ffffff !important;
+    }
+
+    .form-floating > .form-control:focus ~ label,
+    .form-floating > .form-control:not(:placeholder-shown) ~ label {
+        color: #22d3ee !important;
+        background-color: #2a2a3b !important;
+        padding: 0 0.5rem;
+        opacity: 1;
+    }
+
+    .form-floating > label {
+        color: rgba(244, 244, 245, 0.9) !important;
+        background-color: transparent !important;
+    }
+
+    textarea.custom-input {
+        min-height: 150px !important;
     }
 
     .social-link {
@@ -147,6 +180,52 @@
         background-color: rgba(34, 211, 238, 0.1) !important;
         box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
         transform: translateY(-2px);
+    }
+
+    .contact-input {
+        background-color: #1e1e2e !important;
+        color: white !important;
+        border: 2px solid rgba(244, 244, 245, 0.4) !important;
+        padding: 12px !important;
+        font-size: 16px !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .contact-input:focus {
+        background-color: #1e1e2e !important;
+        color: white !important;
+        border-color: #22d3ee !important;
+        box-shadow: 0 0 0 0.25rem rgba(34, 211, 238, 0.25) !important;
+        outline: none !important;
+    }
+
+    .contact-input.is-invalid {
+        border-color: rgba(244, 244, 245, 0.4) !important;
+        background-image: none !important;
+    }
+
+    .contact-input.is-invalid:focus {
+        border-color: #22d3ee !important;
+        box-shadow: 0 0 0 0.25rem rgba(34, 211, 238, 0.25) !important;
+    }
+
+    .field-validation-valid {
+        display: none;
+    }
+
+    textarea.contact-input {
+        resize: vertical;
+    }
+
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .btn-primary:hover {
+        background: #0ea5e9 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(34, 211, 238, 0.25);
     }
 </style>
 

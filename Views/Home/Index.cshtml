@@ -641,42 +641,41 @@
 
         .success-modal .modal-content {
             border: none;
-            border-radius: 20px;
+            border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            animation: modalSlideIn 0.3s ease-out;
         }
 
         .success-modal .modal-header {
-            background: #10B981;
-            color: white;
-            border-radius: 20px 20px 0 0;
-            padding: 1.5rem;
-            border: none;
+            background: #2B2B2B !important;
+            color: #f4f4f5 !important;
         }
 
-        .success-modal .modal-body {
-            padding: 2rem;
-            text-align: center;
+        .success-modal .btn-dark {
+            background: #2B2B2B !important;
+            color: #f4f4f5 !important;
+            border: none !important;
+            padding: 12px 24px !important;
+            border-radius: 6px !important;
+            transition: all 0.3s ease !important;
         }
 
-        .success-modal .modal-footer {
-            border: none;
-            padding: 1.5rem;
-            justify-content: center;
+        .success-modal .btn-dark:hover {
+            background: #444444 !important;
+            transform: translateY(-1px);
         }
 
-        .success-modal .btn-success {
-            background: #10B981;
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 10px;
-            font-weight: 500;
-            transition: all 0.3s ease;
+        .success-modal .fa-paper-plane {
+            color: #2B2B2B !important;
+            animation: modalIconFloat 2s infinite ease-in-out;
         }
 
-        .success-modal .btn-success:hover {
-            background: #059669;
-            transform: translateY(-2px);
+        @@keyframes modalIconFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
         }
 
         .success-icon {
@@ -716,6 +715,74 @@
             50% {
                 transform: translateY(-10px);
             }
+        }
+
+        /* Contact Form Styles */
+        .contact-card {
+            background: #ffffff;
+            border: 1px solid #e2e2e3;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-form .form-control {
+            background-color: #f4f4f5 !important;
+            color: #1e1e2e !important;
+            border: 1px solid #e2e2e3 !important;
+            padding: 12px !important;
+            font-size: 16px !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .contact-form .form-control:focus {
+            border-color: #8F7171 !important;
+            box-shadow: 0 0 0 0.2rem rgba(143, 113, 113, 0.25) !important;
+            outline: none !important;
+        }
+
+        .contact-form .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .contact-form label {
+            color: #2a2a3b !important;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-form textarea.form-control {
+            min-height: 150px !important;
+            resize: vertical;
+        }
+
+        .btn-send {
+            background: #1a1a1a !important;
+            color: #f4f4f5 !important;
+            border: none !important;
+            padding: 12px 24px !important;
+            font-size: 16px !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+            border-radius: 4px !important;
+        }
+
+        .btn-send:hover {
+            background: #22d3ee !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(34, 211, 238, 0.25);
+        }
+
+        .btn-send:active {
+            transform: translateY(0);
+            box-shadow: none !important;
+        }
+
+        .contact-form .form-control::placeholder {
+            color: #6c757d !important;
+        }
+
+        .contact-form .is-invalid {
+            border-color: #dc3545 !important;
+            background-image: none !important;
         }
     </style>
 }
@@ -1032,53 +1099,36 @@
 
             <!-- Contact Form -->
             <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="h5 mb-4">Send a Message</h3>
-                        <form id="contactForm" class="needs-validation" novalidate>
+                <div class="card contact-card">
+                    <div class="card-body p-4">
+                        <h3 class="h5 mb-4 text-dark">Send a Message</h3>
+                        <form asp-action="Contact" asp-controller="Home" method="post" class="contact-form">
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="name" name="name" placeholder="Your Name" required>
-                                        <label for="name">Your Name</label>
-                                        <div class="invalid-feedback">Please enter your name.</div>
+                                    <div class="form-group">
+                                        <label for="name" class="form-label">Your Name</label>
+                                        <input type="text" class="form-control contact-input" id="name" name="ContactForm.Name" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="email" class="form-control" id="email" name="email" placeholder="Your Email" required>
-                                        <label for="email">Your Email</label>
-                                        <div class="invalid-feedback">Please enter a valid email address.</div>
+                                    <div class="form-group">
+                                        <label for="email" class="form-label">Your Email</label>
+                                        <input type="email" class="form-control contact-input" id="email" name="ContactForm.Email" required>
                                     </div>
                                 </div>
                                 <div class="col-12">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="subject" name="subject" placeholder="Subject" required>
-                                        <label for="subject">Subject</label>
-                                        <div class="invalid-feedback">Please enter a subject.</div>
+                                    <div class="form-group">
+                                        <label for="message" class="form-label">Your Message</label>
+                                        <textarea class="form-control contact-input" id="message" name="ContactForm.Message" rows="5" required></textarea>
                                     </div>
                                 </div>
                                 <div class="col-12">
-                                    <div class="form-floating">
-                                        <textarea class="form-control" id="message" name="message" placeholder="Your Message" style="height: 150px" required></textarea>
-                                        <label for="message">Your Message</label>
-                                        <div class="invalid-feedback">Please enter your message.</div>
-                                        <div class="form-text text-end">
-                                            <span id="messageCount">0</span>/500 characters
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-primary">
+                                    <button type="submit" class="btn btn-send w-100">
                                         <i class="fas fa-paper-plane me-2"></i>Send Message
-                                        <span class="spinner-border spinner-border-sm d-none" role="status"></span>
                                     </button>
                                 </div>
                             </div>
                         </form>
-                        <div id="successMessage" class="alert alert-success mt-3 d-none">
-                            Thank you for your message! I'll get back to you soon.
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1109,7 +1159,7 @@
 <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow">
-      <div class="modal-header border-0 bg-success text-white">
+      <div class="modal-header border-0 bg-dark text-light">
         <h5 class="modal-title" id="successModalLabel">
           <i class="fas fa-check-circle me-2"></i>Message Sent Successfully
         </h5>
@@ -1118,15 +1168,15 @@
       <div class="modal-body p-4">
         <div class="text-center mb-4">
           <div class="mb-3">
-            <i class="fas fa-paper-plane fa-3x text-success"></i>
+            <i class="fas fa-paper-plane fa-3x text-secondary"></i>
           </div>
-          <h4 class="mb-3">Thank You!</h4>
-          <p class="lead mb-0">Your message has been sent successfully.</p>
+          <h4 class="mb-3 text-dark">Thank You!</h4>
+          <p class="lead mb-0 text-secondary">Your message has been sent successfully.</p>
           <p class="text-muted">Anastasiia will get back to you shortly.</p>
         </div>
       </div>
       <div class="modal-footer border-0 justify-content-center">
-        <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal">
+        <button type="button" class="btn btn-dark px-4" data-bs-dismiss="modal">
           <i class="fas fa-check me-2"></i>Got it
         </button>
       </div>
