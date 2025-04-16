@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using AnastasiiaPortfolio.Models;
 using AnastasiiaPortfolio.Data;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AnastasiiaPortfolio.Controllers
 {
@@ -37,6 +38,23 @@ namespace AnastasiiaPortfolio.Controllers
                 return PartialView("_ReviewPartial", review);
             }
             return BadRequest(ModelState);
+        }
+
+        // POST: Rate/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var review = await _context.Reviews.FindAsync(id);
+            if (review == null)
+            {
+                return NotFound();
+            }
+
+            _context.Reviews.Remove(review);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
     }
 } 

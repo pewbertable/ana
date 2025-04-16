@@ -7,45 +7,70 @@
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h2 class="card-title mb-4">Review @ViewBag.Project.Title</h2>
-                    
-                    <form asp-action="Create" method="post">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title mb-4">Review @ViewBag.Project.Title</h2>
                         
-                        <input type="hidden" asp-for="ProjectId" />
-                        
-                        <div class="mb-3">
-                            <label asp-for="Rating" class="form-label">Rating</label>
-                            <div class="rating-input">
-                                @for (int i = 5; i >= 1; i--)
-                                {
-                                    <input type="radio" asp-for="Rating" value="@i" id="star@i" class="rating-input__radio">
-                                    <label for="star@i" class="rating-input__label">
-                                        <i class="fas fa-star"></i>
-                                    </label>
-                                }
+                        <form asp-action="Create" method="post" id="reviewForm">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            
+                            <input type="hidden" asp-for="ProjectId" />
+                            
+                            <div class="mb-3">
+                                <label asp-for="Rating" class="form-label">Rating</label>
+                                <div class="rating-input">
+                                    @for (int i = 5; i >= 1; i--)
+                                    {
+                                        <input type="radio" asp-for="Rating" value="@i" id="star@i" class="rating-input__radio">
+                                        <label for="star@i" class="rating-input__label">
+                                            <i class="fas fa-star"></i>
+                                        </label>
+                                    }
+                                </div>
+                                <span asp-validation-for="Rating" class="text-danger"></span>
                             </div>
-                            <span asp-validation-for="Rating" class="text-danger"></span>
-                        </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Comment" class="form-label">Your Review</label>
-                            <textarea asp-for="Comment" class="form-control" rows="5" placeholder="Share your thoughts about this project..."></textarea>
-                            <span asp-validation-for="Comment" class="text-danger"></span>
-                        </div>
+                            <div class="mb-3">
+                                <label asp-for="Comment" class="form-label">Your Review</label>
+                                <textarea asp-for="Comment" class="form-control" rows="5" placeholder="Share your thoughts about this project..."></textarea>
+                                <span asp-validation-for="Comment" class="text-danger"></span>
+                            </div>
 
-                        <div class="d-flex justify-content-between">
-                            <a asp-controller="Home" asp-action="Details" asp-route-id="@Model.ProjectId" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left me-2"></i>Back to Project
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-paper-plane me-2"></i>Submit Review
-                            </button>
-                        </div>
-                    </form>
+                            <div class="d-flex justify-content-between">
+                                <a asp-controller="Home" asp-action="Details" asp-route-id="@Model.ProjectId" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Back to Project
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane me-2"></i>Submit Review
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Thank You Modal -->
+<div class="modal custom-modal fade" id="thankYouModal" tabindex="-1" aria-labelledby="thankYouModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body custom-modal-body">
+                <div class="success-animation">
+                    <div class="success-circle">
+                        <i class="fas fa-check"></i>
+                    </div>
+                </div>
+                <div class="modal-text">
+                    <h2>Thank You!</h2>
+                    <p>Your review has been submitted successfully</p>
+                </div>
+                <div class="modal-button">
+                    <button type="button" class="custom-button" data-bs-dismiss="modal" onclick="redirectToProject()">
+                        Return to Project
+                    </button>
                 </div>
             </div>
         </div>
@@ -76,8 +101,165 @@
     .rating-input__label:hover ~ .rating-input__label {
         color: #ffd700;
     }
+
+    .custom-modal .modal-content {
+        background: #fff;
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        overflow: hidden;
+    }
+
+    .custom-modal-body {
+        padding: 40px;
+        text-align: center;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    }
+
+    .success-animation {
+        margin-bottom: 30px;
+    }
+
+    .success-circle {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #2ecc71, #27ae60);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        position: relative;
+        animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        box-shadow: 0 5px 20px rgba(46, 204, 113, 0.3);
+    }
+
+    .success-circle::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 2px solid #2ecc71;
+        animation: ripple 1s ease-out infinite;
+    }
+
+    .success-circle i {
+        color: white;
+        font-size: 40px;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    .modal-text {
+        margin-bottom: 30px;
+        animation: slideUp 0.5s ease-out 0.3s both;
+    }
+
+    .modal-text h2 {
+        color: #2c3e50;
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .modal-text p {
+        color: #7f8c8d;
+        font-size: 18px;
+        margin: 0;
+    }
+
+    .custom-button {
+        background: linear-gradient(45deg, #3498db, #2980b9);
+        color: white;
+        border: none;
+        padding: 12px 35px;
+        border-radius: 25px;
+        font-size: 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        animation: slideUp 0.5s ease-out 0.6s both;
+    }
+
+    .custom-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+        background: linear-gradient(45deg, #2980b9, #2573a7);
+    }
+
+    @@keyframes popIn {
+        0% {
+            transform: scale(0);
+            opacity: 0;
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    @@keyframes ripple {
+        0% {
+            transform: scale(1);
+            opacity: 0.5;
+        }
+        100% {
+            transform: scale(1.5);
+            opacity: 0;
+        }
+    }
+
+    @@keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    @@keyframes slideUp {
+        0% {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+        100% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .modal.fade .modal-dialog {
+        transform: scale(0.8) translateY(20px);
+        opacity: 0;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .modal.show .modal-dialog {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
 </style>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        document.getElementById('reviewForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show the modal
+            var modal = new bootstrap.Modal(document.getElementById('thankYouModal'));
+            modal.show();
+            
+            // Submit the form after a short delay
+            setTimeout(() => {
+                this.submit();
+            }, 1500);
+        });
+
+        function redirectToProject() {
+            window.location.href = '@Url.Action("Details", "Projects", new { id = Model.ProjectId })';
+        }
+    </script>
 } 

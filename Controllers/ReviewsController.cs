@@ -157,7 +157,7 @@ namespace AnastasiiaPortfolio.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, int projectId)
         {
             var review = await _context.Reviews.FindAsync(id);
             if (review == null)
@@ -165,7 +165,6 @@ namespace AnastasiiaPortfolio.Controllers
                 return NotFound();
             }
 
-            var projectId = review.ProjectId;
             _context.Reviews.Remove(review);
             await _context.SaveChangesAsync();
             return RedirectToAction("Details", "Projects", new { id = projectId });

@@ -118,7 +118,18 @@
                                         </button>
                                     </div>
                                 </div>
-                                <small class="text-muted">@review.CreatedAt.ToString("MMMM d, yyyy")</small>
+                                <div class="d-flex flex-column align-items-end">
+                                    <small class="text-muted mb-2">@review.CreatedAt.ToString("MMMM d, yyyy")</small>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <form asp-controller="Reviews" asp-action="Delete" asp-route-id="@review.Id" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this review?')">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
