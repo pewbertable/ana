@@ -1,0 +1,138 @@
+/* Modern Snake Game Styling */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap');
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #1e1e2e;  /* Dark Graphite */
+    padding: 2rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+#gameCanvas {
+    background-color: #2a2a3b;  /* Slate Grey */
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(34, 211, 238, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(244, 244, 245, 0.1);
+}
+
+#gameCanvas:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 40px rgba(34, 211, 238, 0.2);
+}
+
+.game-info {
+    margin-top: 2rem;
+    color: #f4f4f5;  /* Light Grey-White */
+    text-align: center;
+    background: #0f172a + #1e3a8a;  /* Deep Blue Gradient */
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 1px solid rgba(244, 244, 245, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.score {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #f4f4f5;  /* Light Grey-White */
+    margin-bottom: 1rem;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.controls {
+    margin-top: 1rem;
+    color: #f4f4f5;  /* Light Grey-White */
+    font-size: 0.9rem;
+    opacity: 0.8;
+    font-family: 'Roboto Mono', monospace;
+}
+
+/* Leaderboard Styling */
+.leaderboard {
+    margin-top: 2rem;
+    background: #2a2a3b;  /* Slate Grey */
+    border-radius: 10px;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid #f4f4f5;  /* Light Grey-White */
+}
+
+.leaderboard-title {
+    color: #f4f4f5;  /* Light Grey-White */
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+.leaderboard-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem;
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
+    background: rgba(42, 42, 59, 0.5);
+    border: 1px solid #f4f4f5;  /* Light Grey-White */
+}
+
+.leaderboard-item.top-score {
+    border: 1px solid #facc15;  /* Gold accent */
+    background: rgba(250, 204, 21, 0.1);
+}
+
+/* Game Over Overlay */
+.game-over {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 400px;
+    padding: 2rem;
+    background: #0f172a;  /* Dark Blue-Gray */
+    color: #f4f4f5;  /* Light Grey-White */
+    font-family: 'Poppins', sans-serif;
+    border-radius: 10px;
+    border: 1px solid rgba(244, 244, 245, 0.1);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.game-over h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #f87171;  /* Soft Red */
+    font-weight: 600;
+}
+
+.game-over p {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.game-over button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    background-color: #1a1a1a;  /* Deep Charcoal */
+    color: #f4f4f5;  /* Light Grey-White */
+    border: 1px solid #22d3ee;  /* Tech-style neon */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.game-over button:hover {
+    background-color: rgba(34, 211, 238, 0.1);  /* Tech-style neon glow */
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+    transform: translateY(-2px);
+} 
