@@ -1,0 +1,10 @@
+# Tell Nixpacks which providers (languages/tools) and versions to use
+[phases.setup]
+# Specify the Nix package for .NET 8 SDK. The exact package name might vary slightly
+# depending on Nixpkgs revisions, but 'dotnet-sdk_8' is common.
+nixPkgs = ["dotnet-sdk_8"]
+
+# Define the command to start the application after build
+[start]
+# Assumes your main project DLL is AnastasiiaPortfolio.dll
+cmd = "dotnet AnastasiiaPortfolio.dll" 
