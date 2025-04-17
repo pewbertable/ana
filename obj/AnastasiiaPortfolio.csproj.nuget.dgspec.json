@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\anast\\OneDrive - NC\\Anastasiia\\AnastasiiaPortfolio\\AnastasiiaPortfolio.csproj": {}
+    "C:\\Users\\brayd\\AnastasiiaPortfolioLast\\AnastasiiaPortfolio\\AnastasiiaPortfolio.csproj": {}
   },
   "projects": {
-    "C:\\Users\\anast\\OneDrive - NC\\Anastasiia\\AnastasiiaPortfolio\\AnastasiiaPortfolio.csproj": {
+    "C:\\Users\\brayd\\AnastasiiaPortfolioLast\\AnastasiiaPortfolio\\AnastasiiaPortfolio.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\anast\\OneDrive - NC\\Anastasiia\\AnastasiiaPortfolio\\AnastasiiaPortfolio.csproj",
+        "projectUniqueName": "C:\\Users\\brayd\\AnastasiiaPortfolioLast\\AnastasiiaPortfolio\\AnastasiiaPortfolio.csproj",
         "projectName": "AnastasiiaPortfolio",
-        "projectPath": "C:\\Users\\anast\\OneDrive - NC\\Anastasiia\\AnastasiiaPortfolio\\AnastasiiaPortfolio.csproj",
-        "packagesPath": "C:\\Users\\anast\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\anast\\OneDrive - NC\\Anastasiia\\AnastasiiaPortfolio\\obj\\",
+        "projectPath": "C:\\Users\\brayd\\AnastasiiaPortfolioLast\\AnastasiiaPortfolio\\AnastasiiaPortfolio.csproj",
+        "packagesPath": "C:\\Users\\brayd\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\brayd\\AnastasiiaPortfolioLast\\AnastasiiaPortfolio\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\anast\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\brayd\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -45,25 +45,27 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.200"
+        "SdkAnalysisLevel": "9.0.100"
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "AspNetCore.Identity.MongoDbCore": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "FluentValidation.AspNetCore": {
+              "target": "Package",
+              "version": "[11.3.0, )"
+            },
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
               "version": "[8.0.4, )"
             },
-            "Microsoft.EntityFrameworkCore.SqlServer": {
+            "MongoDB.Driver": {
               "target": "Package",
-              "version": "[8.0.4, )"
-            },
-            "Microsoft.EntityFrameworkCore.Tools": {
-              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[8.0.4, )"
+              "version": "[2.28.0, )"
             },
             "bootstrap": {
               "target": "Package",
@@ -93,7 +95,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

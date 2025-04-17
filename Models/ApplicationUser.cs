@@ -1,23 +1,28 @@
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using AspNetCore.Identity.MongoDbCore.Models;
 
 namespace AnastasiiaPortfolio.Models
 {
-    public class ApplicationUser : IdentityUser
+    public class ApplicationUser : MongoIdentityUser<Guid>
     {
-        [Required]
         public string FirstName { get; set; } = string.Empty;
 
-        [Required]
         public string LastName { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public bool IsAdmin { get; set; }
 
-        public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
-        public virtual ICollection<ReviewVote> ReviewVotes { get; set; } = new List<ReviewVote>();
+        public ApplicationUser() : base()
+        {
+            CreatedAt = DateTime.UtcNow;
+        }
+
+        public ApplicationUser(string userName, string email) : base(userName, email)
+        {
+            CreatedAt = DateTime.UtcNow;
+        }
     }
 } 

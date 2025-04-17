@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using AnastasiiaPortfolio.Services;
 using System.Threading.Tasks;
+using MongoDB.Driver;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AnastasiiaPortfolio.Controllers;
 
@@ -13,60 +16,41 @@ public class HomeController : Controller
     private readonly ILogger<HomeController> _logger;
     private readonly IWebHostEnvironment _environment;
     private readonly IEmailService _emailService;
+    private readonly IMongoCollection<Project> _projectsCollection;
 
-    public HomeController(ILogger<HomeController> logger, IWebHostEnvironment environment, IEmailService emailService)
+    public HomeController(
+        ILogger<HomeController> logger, 
+        IWebHostEnvironment environment, 
+        IEmailService emailService,
+        IMongoDatabase database)
     {
         _logger = logger;
         _environment = environment;
         _emailService = emailService;
+        _projectsCollection = database.GetCollection<Project>("Projects");
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        // Create a view model for the home page
+        // Fetch featured projects from MongoDB
+        var featuredProjects = await _projectsCollection.Find(p => p.IsFeatured == true)
+                                                  .Sort(Builders<Project>.Sort.Descending(p => p.DateCompleted))
+                                                  .Limit(3)
+                                                  .ToListAsync();
+
         var viewModel = new HomeViewModel
         {
-            FeaturedProjects = new List<Project>
-            {
-                new Project
-                {
-                    Id = 1,
-                    Title = "E-Commerce Platform",
-                    Description = "A full-stack e-commerce solution built with ASP.NET Core MVC",
-                    ImageUrl = "/images/projects/ecommerce.jpg",
-                    Technologies = "ASP.NET Core MVC, SQL Server, Entity Framework, Bootstrap",
-                    ProjectUrl = "https://example.com/ecommerce",
-                    GitHubUrl = "https://github.com/pewbertable/CrmTechTitans",
-                    DateCompleted = DateTime.Now.AddMonths(-3),
-                    IsFeatured = true,
-                    Category = "Web Application"
-                },
-                // Add more featured projects as needed
-            }
+            FeaturedProjects = featuredProjects
         };
         return View(viewModel);
     }
 
-    public IActionResult Portfolio()
+    public async Task<IActionResult> Portfolio()
     {
-        // TODO: Replace with actual data from database
-        var projects = new List<Project>
-        {
-            new Project
-            {
-                Id = 1,
-                Title = "E-Commerce Platform",
-                Description = "A full-stack e-commerce solution built with ASP.NET Core MVC",
-                ImageUrl = "/images/projects/ecommerce.jpg",
-                Technologies = "ASP.NET Core MVC, SQL Server, Entity Framework, Bootstrap",
-                ProjectUrl = "https://example.com/ecommerce",
-                GitHubUrl = "https://github.com/pewbertable/CrmTechTitans",
-                DateCompleted = DateTime.Now.AddMonths(-3),
-                IsFeatured = true,
-                Category = "Web Application"
-            },
-            // Add more sample projects here
-        };
+        // Fetch all projects from MongoDB
+        var projects = await _projectsCollection.Find(_ => true)
+                                          .Sort(Builders<Project>.Sort.Descending(p => p.DateCompleted))
+                                          .ToListAsync();
 
         return View(projects);
     }

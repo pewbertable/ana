@@ -1,39 +1,39 @@
 using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+// using System.ComponentModel.DataAnnotations;
+// using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace AnastasiiaPortfolio.Models
 {
     public class Review
     {
-        public int Id { get; set; }
+        [BsonId]
+        public Guid Id { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        // Remove DataAnnotations
         public required string Name { get; set; }
 
-        [Required]
-        [Range(1, 5)]
+        // Remove DataAnnotations
         public int Rating { get; set; }
 
-        [Required]
-        [StringLength(500)]
+        // Remove DataAnnotations
         public required string Comment { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public int? ProjectId { get; set; }
+        public Guid? ProjectId { get; set; } // Change to Guid?
 
-        public string? UserId { get; set; }
+        public Guid? UserId { get; set; } // Change to Guid?
 
-        [StringLength(100)]
+        // Remove DataAnnotations
         public string? Title { get; set; }
 
-        [StringLength(500)]
+        // Remove DataAnnotations
         public string? Pros { get; set; }
 
-        [StringLength(500)]
+        // Remove DataAnnotations
         public string? Cons { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
@@ -50,15 +50,24 @@ namespace AnastasiiaPortfolio.Models
 
         public ReviewSortOption SortOption { get; set; }
 
-        [ForeignKey("ProjectId")]
-        public virtual Project? Project { get; set; }
+        // Remove ForeignKey attribute and comment out navigation property
+        // [ForeignKey("ProjectId")]
+        // public virtual Project? Project { get; set; }
 
-        [ForeignKey("UserId")]
-        public virtual ApplicationUser? User { get; set; }
+        // Remove ForeignKey attribute and comment out navigation property
+        // [ForeignKey("UserId")]
+        // public virtual ApplicationUser? User { get; set; }
 
-        public virtual ICollection<ReviewVote> Votes { get; set; } = new List<ReviewVote>();
+        // Comment out navigation property
+        // public virtual ICollection<ReviewVote> Votes { get; set; } = new List<ReviewVote>();
+
+        public Review()
+        {
+            Id = Guid.NewGuid();
+        }
     }
 
+    // Keep the enum
     public enum ReviewSortOption
     {
         Newest,

@@ -1,28 +1,38 @@
 using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+// using System.ComponentModel.DataAnnotations;
+// using System.ComponentModel.DataAnnotations.Schema;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace AnastasiiaPortfolio.Models
 {
     public class ReviewVote
     {
-        public int Id { get; set; }
+        [BsonId]
+        public Guid Id { get; set; }
 
-        [Required]
-        public int ReviewId { get; set; }
+        // Remove DataAnnotations
+        public Guid ReviewId { get; set; } // Change to Guid
 
-        [Required]
-        public string UserId { get; set; } = string.Empty;
+        // Remove DataAnnotations
+        public Guid UserId { get; set; } // Change to Guid
 
-        [Required]
+        // Remove DataAnnotations
         public bool IsHelpful { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        [ForeignKey("ReviewId")]
-        public virtual Review Review { get; set; } = null!;
+        // Remove ForeignKey attribute and comment out navigation property
+        // [ForeignKey("ReviewId")]
+        // public virtual Review Review { get; set; } = null!;
 
-        [ForeignKey("UserId")]
-        public virtual ApplicationUser User { get; set; } = null!;
+        // Remove ForeignKey attribute and comment out navigation property
+        // [ForeignKey("UserId")]
+        // public virtual ApplicationUser User { get; set; } = null!;
+
+        public ReviewVote()
+        {
+            Id = Guid.NewGuid();
+        }
     }
 } 

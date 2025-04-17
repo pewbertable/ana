@@ -1,70 +1,103 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+// using Microsoft.EntityFrameworkCore; // Remove EF Core
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using AnastasiiaPortfolio.Data;
+// using AnastasiiaPortfolio.Data; // Remove EF Core Data
 using AnastasiiaPortfolio.Models;
 using System.Security.Claims;
+using MongoDB.Driver; // Add MongoDB
+using MongoDB.Bson; // Add Bson
+using System.Linq.Expressions; // For filters
 
 namespace AnastasiiaPortfolio.Controllers
 {
     [Authorize]
     public class ReviewsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        // Replace DbContext with IMongoDatabase
+        private readonly IMongoCollection<Review> _reviewsCollection;
+        private readonly IMongoCollection<Project> _projectsCollection;
+        private readonly IMongoCollection<ReviewVote> _reviewVotesCollection;
+        private readonly IMongoCollection<ApplicationUser> _usersCollection; // Needed for Admin view user list
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public ReviewsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public ReviewsController(IMongoDatabase database, UserManager<ApplicationUser> userManager)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _reviewsCollection = database.GetCollection<Review>("Reviews");
+            _projectsCollection = database.GetCollection<Project>("Projects");
+            _reviewVotesCollection = database.GetCollection<ReviewVote>("ReviewVotes");
+            _usersCollection = database.GetCollection<ApplicationUser>("Users"); // Identity stores users in "Users" collection by default
         }
 
         // GET: Reviews/Admin
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Admin(string? userId = null, bool showHidden = false)
+        public async Task<IActionResult> Admin(Guid? userId = null, bool showHidden = false)
         {
-            var query = _context.Reviews
-                .Include(r => r.User)
-                .Include(r => r.Project)
-                .AsQueryable();
+            var filterBuilder = Builders<Review>.Filter;
+            var filter = filterBuilder.Empty; // Start with an empty filter
 
-            if (!string.IsNullOrEmpty(userId))
+            if (userId != null)
             {
-                query = query.Where(r => r.UserId == userId);
+                filter &= filterBuilder.Eq(r => r.UserId, userId.Value);
             }
 
             if (!showHidden)
             {
-                query = query.Where(r => !r.IsHidden);
+                filter &= filterBuilder.Eq(r => r.IsHidden, false);
             }
 
-            var reviews = await query.OrderByDescending(r => r.CreatedAt).ToListAsync();
-            var users = await _userManager.Users.ToListAsync();
+            var reviews = await _reviewsCollection.Find(filter)
+                                        .Sort(Builders<Review>.Sort.Descending(r => r.CreatedAt))
+                                        .ToListAsync();
 
-            ViewBag.Users = users;
+            // --- Fetch related data --- 
+            // Get distinct UserIds and ProjectIds from the fetched reviews
+            var userIdsInReviews = reviews.Select(r => r.UserId).Where(id => id.HasValue).Distinct().ToList();
+            var projectIdsInReviews = reviews.Select(r => r.ProjectId).Where(id => id.HasValue).Distinct().ToList();
+
+            // Fetch corresponding Users and Projects
+            var usersTask = _usersCollection.Find(u => userIdsInReviews.Contains(u.Id)).ToListAsync();
+            var projectsTask = _projectsCollection.Find(p => projectIdsInReviews.Contains(p.Id)).ToListAsync();
+            
+            await Task.WhenAll(usersTask, projectsTask);
+
+            // Create dictionaries for easy lookup in the view
+            ViewBag.UsersLookup = usersTask.Result.ToDictionary(u => u.Id, u => u.UserName ?? u.Email); // Use UserName or Email
+            ViewBag.ProjectsLookup = projectsTask.Result.ToDictionary(p => p.Id, p => p.Title);
+            // --- End Fetch related data --- 
+
+            // Get all users for the filter dropdown
+            var allUsers = await _usersCollection.Find(_ => true).ToListAsync(); 
+
+            ViewBag.Users = allUsers; // For dropdown
             ViewBag.SelectedUserId = userId;
             ViewBag.ShowHidden = showHidden;
 
-            return View(reviews);
+            return View(reviews); // Pass the list of Review models
         }
 
         // GET: Reviews/Create
         [Authorize]
-        public async Task<IActionResult> Create(int projectId)
+        public async Task<IActionResult> Create(Guid projectId) // Change projectId to Guid
         {
-            var project = await _context.Projects.FindAsync(projectId);
-            if (project == null)
+            // Verify Project exists
+            var projectExists = await _projectsCollection.CountDocumentsAsync(p => p.Id == projectId) > 0;
+            if (!projectExists)
             {
                 return NotFound();
             }
 
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Challenge();
+
             var model = new Review
             {
                 ProjectId = projectId,
-                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException("User ID not found."),
-                Name = User.Identity?.Name ?? "Anonymous",
-                Comment = string.Empty
+                UserId = user.Id, // Assign Guid ID
+                Name = user.UserName ?? "Anonymous", // Use UserName from ApplicationUser
+                Comment = string.Empty,
+                // Id will be generated by MongoDB or constructor
             };
 
             return View(model);
@@ -74,174 +107,278 @@ namespace AnastasiiaPortfolio.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Create(Review review)
+        public async Task<IActionResult> Create([Bind("ProjectId,Rating,Comment,Name,Title,Pros,Cons")] Review review) // Bind relevant fields
         {
+            // Re-enable validation check
             if (ModelState.IsValid)
             {
-                review.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException("User ID not found.");
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null) return Challenge();
+
+                // Verify Project exists
+                var projectExists = await _projectsCollection.CountDocumentsAsync(p => p.Id == review.ProjectId.GetValueOrDefault()) > 0;
+                if (!projectExists)
+                {
+                    // Add model error or return NotFound
+                    ModelState.AddModelError("ProjectId", "Invalid Project ID");
+                    return View(review); // Return view with error
+                }
+
+                review.UserId = user.Id;
                 review.CreatedAt = DateTime.UtcNow;
-                _context.Add(review);
-                await _context.SaveChangesAsync();
+                review.Id = Guid.NewGuid(); // Ensure Id is generated
+
+                await _reviewsCollection.InsertOneAsync(review);
                 return RedirectToAction("Details", "Projects", new { id = review.ProjectId });
             }
+            // Return view with model to display validation errors
             return View(review);
+        }
+
+        // GET: Reviews/Edit (Assuming an Edit view exists)
+        [Authorize]
+        public async Task<IActionResult> Edit(Guid id) // Change id to Guid
+        {
+            var review = await _reviewsCollection.Find(r => r.Id == id).FirstOrDefaultAsync();
+            if (review == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null || review.UserId != user.Id)
+            {
+                 // Optional: Allow Admins to edit any review
+                 if (!User.IsInRole("Admin"))
+                 {
+                    return Forbid();
+                 }
+            }
+
+            return View(review); // Assuming an Edit.cshtml view exists for Reviews
         }
 
         // POST: Reviews/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ProjectId,Rating,Comment")] Review review)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,ProjectId,Rating,Comment,Name,Title,Pros,Cons,IsHidden,IsVerified,IsFeatured")] Review review) // Change id to Guid, bind fields
         {
+            // Check bound ID matches route ID
             if (id != review.Id)
             {
                 return NotFound();
             }
 
-            var existingReview = await _context.Reviews.FindAsync(id);
-            if (existingReview == null)
-            {
-                return NotFound();
-            }
-
-            // Check if the current user is the review owner
-            if (existingReview.UserId != _userManager.GetUserId(User))
-            {
-                return Forbid();
-            }
-
+            // Re-enable validation check
             if (ModelState.IsValid)
             {
-                try
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null) return Challenge();
+
+                var existingReviewFilter = Builders<Review>.Filter.Eq(r => r.Id, id);
+                var existingReview = await _reviewsCollection.Find(existingReviewFilter).FirstOrDefaultAsync();
+
+                if (existingReview == null)
                 {
-                    existingReview.Rating = review.Rating;
-                    existingReview.Comment = review.Comment;
-                    existingReview.UpdatedAt = DateTime.UtcNow;
-                    _context.Update(existingReview);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+
+                // Check ownership or admin role
+                bool isAdmin = User.IsInRole("Admin");
+                if (existingReview.UserId != user.Id && !isAdmin)
                 {
-                    if (!ReviewExists(review.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return Forbid();
                 }
-                return RedirectToAction("Details", "Projects", new { id = review.ProjectId });
+
+                 // Prepare update definition
+                var updateBuilder = Builders<Review>.Update;
+                var updates = new List<UpdateDefinition<Review>>();
+
+                // Preserve immutable fields like ProjectId, UserId, CreatedAt
+                // Update editable fields from the bound model
+                updates.Add(updateBuilder.Set(r => r.Rating, review.Rating));
+                updates.Add(updateBuilder.Set(r => r.Comment, review.Comment));
+                updates.Add(updateBuilder.Set(r => r.Name, review.Name));
+                updates.Add(updateBuilder.Set(r => r.Title, review.Title));
+                updates.Add(updateBuilder.Set(r => r.Pros, review.Pros));
+                updates.Add(updateBuilder.Set(r => r.Cons, review.Cons));
+                updates.Add(updateBuilder.Set(r => r.UpdatedAt, DateTime.UtcNow));
+
+                // Only Admins can change these fields
+                if (isAdmin)
+                {
+                    updates.Add(updateBuilder.Set(r => r.IsHidden, review.IsHidden));
+                    updates.Add(updateBuilder.Set(r => r.IsVerified, review.IsVerified));
+                    updates.Add(updateBuilder.Set(r => r.IsFeatured, review.IsFeatured));
+                }
+
+                var combinedUpdate = updateBuilder.Combine(updates);
+
+                var result = await _reviewsCollection.UpdateOneAsync(existingReviewFilter, combinedUpdate);
+
+                 // Check result.ModifiedCount if needed, handle concurrency etc.
+                 if (!result.IsAcknowledged)
+                 {
+                     ModelState.AddModelError("", "Unable to save changes.");
+                     return View(review); // Or appropriate error view
+                 }
+                 if (result.MatchedCount == 0)
+                 {
+                     return NotFound(); // Review disappeared between check and update
+                 }
+
+                // Redirect back to Project Details or Admin view depending on context
+                if (isAdmin && Request.Headers["Referer"].ToString().Contains("/Reviews/Admin"))
+                {
+                     return RedirectToAction(nameof(Admin)); // Or redirect with original query params
+                }
+                return RedirectToAction("Details", "Projects", new { id = existingReview.ProjectId });
             }
-            return RedirectToAction("Details", "Projects", new { id = review.ProjectId });
+            // Return view with model to display validation errors
+            return View(review);
         }
 
-        // POST: Reviews/Hide/5
+        // POST: Reviews/Hide/5 (Now handled by Edit for Admins)
+        // POST: Reviews/Unhide/5 (Example for Admin)
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Hide(int id)
+        public async Task<IActionResult> ToggleHide(Guid id, string? returnUrl = null) // Change id to Guid
         {
-            var review = await _context.Reviews.FindAsync(id);
-            if (review == null)
-            {
-                return NotFound();
-            }
+             var reviewFilter = Builders<Review>.Filter.Eq(r => r.Id, id);
+             var review = await _reviewsCollection.Find(reviewFilter).FirstOrDefaultAsync();
+             if (review == null)
+             {
+                 return NotFound();
+             }
 
-            review.IsHidden = true;
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Details", "Projects", new { id = review.ProjectId });
+             var update = Builders<Review>.Update.Set(r => r.IsHidden, !review.IsHidden);
+             await _reviewsCollection.UpdateOneAsync(reviewFilter, update);
+
+             if (Url.IsLocalUrl(returnUrl))
+             {
+                return Redirect(returnUrl);
+             }
+             return RedirectToAction(nameof(Admin)); // Default redirect
         }
 
         // POST: Reviews/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Delete(int id, int projectId)
+        [Authorize(Roles = "Admin")] // Or Authorize based on ownership
+        public async Task<IActionResult> Delete(Guid id, string? returnUrl = null) // Change id to Guid
         {
-            var review = await _context.Reviews.FindAsync(id);
-            if (review == null)
-            {
-                return NotFound();
-            }
+            var reviewFilter = Builders<Review>.Filter.Eq(r => r.Id, id);
+            // Optional: Check ownership before deleting if non-Admins can delete
+            // var review = await _reviewsCollection.Find(reviewFilter).FirstOrDefaultAsync();
+            // var user = await _userManager.GetUserAsync(User);
+            // if (review == null) return NotFound();
+            // if (review.UserId != user.Id && !User.IsInRole("Admin")) return Forbid();
 
-            _context.Reviews.Remove(review);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Details", "Projects", new { id = projectId });
+            var result = await _reviewsCollection.DeleteOneAsync(reviewFilter);
+
+            // TODO: Also delete associated ReviewVotes
+            await _reviewVotesCollection.DeleteManyAsync(v => v.ReviewId == id);
+
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                 return Redirect(returnUrl);
+            }
+            // Determine default redirect (e.g., back to project details or admin list)
+            // var projectId = review?.ProjectId; // Need review object if redirecting to project
+            return RedirectToAction(nameof(Admin)); // Default redirect
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Vote(int reviewId, bool isHelpful)
+        public async Task<IActionResult> Vote(Guid reviewId, bool isHelpful) // Change reviewId to Guid
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                return Unauthorized();
+                return Unauthorized(); // Or Json response with error
             }
+            var userId = user.Id;
 
-            var review = await _context.Reviews.FindAsync(reviewId);
+            var reviewFilter = Builders<Review>.Filter.Eq(r => r.Id, reviewId);
+            var review = await _reviewsCollection.Find(reviewFilter).FirstOrDefaultAsync();
             if (review == null)
             {
-                return NotFound();
+                return NotFound(); // Or Json response with error
             }
 
-            var existingVote = await _context.ReviewVotes
-                .FirstOrDefaultAsync(v => v.ReviewId == reviewId && v.UserId == userId);
+            var voteFilter = Builders<ReviewVote>.Filter.Eq(v => v.ReviewId, reviewId) &
+                             Builders<ReviewVote>.Filter.Eq(v => v.UserId, userId);
+            var existingVote = await _reviewVotesCollection.Find(voteFilter).FirstOrDefaultAsync();
+
+            int helpfulChange = 0;
+            int notHelpfulChange = 0;
 
             if (existingVote != null)
             {
+                // Vote exists, either remove or toggle
                 if (existingVote.IsHelpful == isHelpful)
                 {
-                    _context.ReviewVotes.Remove(existingVote);
-                    if (isHelpful)
-                        review.HelpfulCount--;
-                    else
-                        review.NotHelpfulCount--;
+                    // Removing the vote
+                    await _reviewVotesCollection.DeleteOneAsync(voteFilter);
+                    if (isHelpful) helpfulChange = -1;
+                    else notHelpfulChange = -1;
                 }
                 else
                 {
-                    existingVote.IsHelpful = isHelpful;
+                    // Toggling the vote
+                    var voteUpdate = Builders<ReviewVote>.Update.Set(v => v.IsHelpful, isHelpful);
+                    await _reviewVotesCollection.UpdateOneAsync(voteFilter, voteUpdate);
                     if (isHelpful)
                     {
-                        review.HelpfulCount++;
-                        review.NotHelpfulCount--;
+                        helpfulChange = 1;
+                        notHelpfulChange = -1;
                     }
                     else
                     {
-                        review.HelpfulCount--;
-                        review.NotHelpfulCount++;
+                        helpfulChange = -1;
+                        notHelpfulChange = 1;
                     }
                 }
             }
             else
             {
-                _context.ReviewVotes.Add(new ReviewVote
+                // Adding a new vote
+                var newVote = new ReviewVote
                 {
+                    Id = Guid.NewGuid(),
                     ReviewId = reviewId,
                     UserId = userId,
                     IsHelpful = isHelpful,
                     CreatedAt = DateTime.UtcNow
-                });
-
-                if (isHelpful)
-                    review.HelpfulCount++;
-                else
-                    review.NotHelpfulCount++;
+                };
+                await _reviewVotesCollection.InsertOneAsync(newVote);
+                if (isHelpful) helpfulChange = 1;
+                else notHelpfulChange = 1;
             }
 
-            await _context.SaveChangesAsync();
+            // Update counts on the Review document
+            if (helpfulChange != 0 || notHelpfulChange != 0)
+            {
+                var reviewUpdate = Builders<Review>.Update
+                    .Inc(r => r.HelpfulCount, helpfulChange)
+                    .Inc(r => r.NotHelpfulCount, notHelpfulChange);
+                await _reviewsCollection.UpdateOneAsync(reviewFilter, reviewUpdate);
+            }
 
+            // Return updated counts
+            var updatedReview = await _reviewsCollection.Find(reviewFilter).FirstOrDefaultAsync(); // Re-fetch for updated counts
             return Json(new
             {
-                helpfulCount = review.HelpfulCount,
-                notHelpfulCount = review.NotHelpfulCount
+                helpfulCount = updatedReview?.HelpfulCount ?? review.HelpfulCount + helpfulChange,
+                notHelpfulCount = updatedReview?.NotHelpfulCount ?? review.NotHelpfulCount + notHelpfulChange
             });
         }
 
-        private bool ReviewExists(int id)
+        private async Task<bool> ReviewExists(Guid id) // Change id to Guid
         {
-            return _context.Reviews.Any(e => e.Id == id);
+            return await _reviewsCollection.CountDocumentsAsync(r => r.Id == id) > 0;
         }
     }
 } 
