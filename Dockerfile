@@ -11,6 +11,7 @@ RUN dotnet restore "./AnastasiiaPortfolio.csproj"
 # Copy everything else and build app
 COPY . .
 WORKDIR /source
+RUN dotnet clean "./AnastasiiaPortfolio.csproj" -c Release
 RUN dotnet publish "./AnastasiiaPortfolio.csproj" -c Release -o /app/publish --no-restore
 
 # Stage 2: Serve the application
