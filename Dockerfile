@@ -5,6 +5,7 @@ WORKDIR /source
 # Copy csproj and restore as distinct layers to leverage Docker cache
 COPY *.sln .
 COPY *.csproj .
+RUN rm -rf obj
 RUN dotnet restore "./AnastasiiaPortfolio.csproj"
 
 # Copy everything else and build app
