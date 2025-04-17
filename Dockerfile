@@ -26,5 +26,5 @@ EXPOSE 8080
 ENTRYPOINT ["dotnet", "AnastasiiaPortfolio.dll"]
 
 # Optional: Add environment variable for ASP.NET Core URLs if needed
-ENV ASPNETCORE_URLS=http://+:$PORT
-# ENV ASPNETCORE_URLS=http://+:8080 
+# ENV ASPNETCORE_URLS=http://+:$PORT
+ENV ASPNETCORE_URLS=http://+:8080 
